@@ -2,8 +2,13 @@
 #include <QDebug>
 
 const QVector3D Camera3D::LocalForward(0.0f, 0.0f, -1.0f);
-const QVector3D Camera3D::LocalUp(0.0f, 1.0f, 0.0f);
+const QVector3D Camera3D::LocalUp(0.0f, 10.0f, 0.0f);
 const QVector3D Camera3D::LocalRight(1.0f, 0.0f, 0.0f);
+
+void Camera3D::SetDefaultView(QMatrix4x4 defaultView)
+{
+    m_DefaultView = defaultView;
+}
 
 // Transform By (Add/Scale)
 void Camera3D::translate(const QVector3D &dt)
@@ -19,13 +24,13 @@ void Camera3D::rotate(const QQuaternion &dr)
 }
 
 // Transform To (Setters)
-void Camera3D::setTranslation(const QVector3D &t)
+void Camera3D::SetTranslation(const QVector3D &t)
 {
     m_dirty = true;
     m_translation = t;
 }
 
-void Camera3D::setRotation(const QQuaternion &r)
+void Camera3D::SetRotation(const QQuaternion &r)
 {
     m_dirty = true;
     m_rotation = r;
@@ -42,6 +47,24 @@ const QMatrix4x4 &Camera3D::toMatrix()
         m_world.translate(-m_translation);
     }
     return m_world;
+}
+
+void Camera3D::ResetRotation()
+{
+    QQuaternion zero(1,0,0,0);
+    SetRotation(zero);
+}
+
+void Camera3D::ResetTranslation(float x, float y, float z)
+{
+    QVector3D zero(x,y,z);
+    SetTranslation(zero);
+}
+
+void Camera3D::ResetView(float x, float y, float z)
+{
+    ResetRotation();
+    ResetTranslation(x,y,z);
 }
 
 // Queries

@@ -32,11 +32,23 @@ public:
     void SetPointSizeOption(int option);
     int GetPointSizeOption();
 
-    std::vector<Vertex> GetTriVerteces();
-    void SetTriVerteces(std::vector<Vertex> triVerteces);
+    std::vector<Vertex> GetIceVerteces();
+    void SetIceVerteces(std::vector<Vertex> triVerteces);
 
-    std::vector<int> GetTriIndeces();
-    void SetTriIndeces(std::vector<int> triIndeces);
+    std::vector<int> GetIceIndeces();
+    void SetIceIndeces(std::vector<int> triIndeces);
+
+    std::vector<Vertex> GetBedVerteces();
+    void SetBedVerteces(std::vector<Vertex> triVerteces);
+
+    std::vector<int> GetBedIndeces();
+    void SetBedIndeces(std::vector<int> triIndeces);
+
+    std::vector<Vertex> GetSurfaceVerteces();
+    void SetSurfaceVerteces(std::vector<Vertex> triVerteces);
+
+    std::vector<int> GetSurfaceIndeces();
+    void SetSurfaceIndeces(std::vector<int> triIndeces);
 
     QColor GetBgColour() ;
     void SetBgColour(QColor bgColour);
@@ -46,6 +58,24 @@ public:
 
     QString GetProgressStatus();
     void SetProgressStatus(QString progressStatus);
+
+    void SetLastX(float LastX);
+    void SetLastY(float LastY);
+
+    int GetZFactorOption();
+    void SetZFactorOption(int option);
+
+    int GetZOffsetOption();
+    void SetZOffsetOption(int option);
+
+    bool GetIceSurfaceToggled() const;
+    void SetIceSurfaceToggled(bool iceSurfaceToggled);
+
+    bool GetBedSurfaceToggled() const;
+    void SetBedSurfaceToggled(bool bedSurfaceToggled);
+
+    bool GetSurfaceSurfaceToggled() const;
+    void SetSurfaceSurfaceToggled(bool surfaceSurfaceToggled);
 
 protected:
     virtual void initializeGL();
@@ -60,16 +90,23 @@ protected:
 
 private:
     QColor m_bgColour;
-    std::vector<Vertex> m_triVerteces;
-    std::vector<int> m_triIndeces;
+    std::vector<Vertex> m_iceVerteces;
+    std::vector<int> m_iceIndeces;
+    std::vector<Vertex> m_bedVerteces;
+    std::vector<int> m_bedIndeces;
+    std::vector<Vertex> m_surfaceVerteces;
+    std::vector<int> m_surfaceIndeces;
 
-    QOpenGLBuffer m_triVertex;
-    QOpenGLBuffer *m_triIndex = new QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
-    QOpenGLBuffer m_quadVertex;
-    QOpenGLBuffer m_quadIndex;
+    QOpenGLBuffer m_iceVertex;
+    QOpenGLBuffer *m_iceIndex = new QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
+    QOpenGLBuffer m_bedVertex;
+    QOpenGLBuffer *m_bedIndex = new QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
+    QOpenGLBuffer m_surfaceVertex;
+    QOpenGLBuffer *m_surfaceIndex = new QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
 
-    QOpenGLVertexArrayObject m_triangleVAO;
-    QOpenGLVertexArrayObject m_quadVAO;
+    QOpenGLVertexArrayObject m_iceVAO;
+    QOpenGLVertexArrayObject m_bedVAO;
+    QOpenGLVertexArrayObject m_surfaceVAO;
 
     QOpenGLShaderProgram *m_program;
 
@@ -81,26 +118,48 @@ private:
     Camera3D m_camera;
     Transform3D m_transform;
 
+    /**
+     * @brief The X position of the mouse at the beginning of a movement event.
+     */
+    float m_LastX;
+
+    /**
+     * @brief The Y position of the mouse at the beginning of a movement event.
+     */
+    float m_LastY;
+
     int m_drawOption;
     int m_resOption;
     int m_pointSizeOption;
+    int m_zFactorOption;
+    int m_zOffsetOption;
     int m_progressValue;
+    bool m_iceSurfaceToggled;
+    bool m_bedSurfaceToggled;
+    bool m_surfaceSurfaceToggled;
+
     QString m_progressStatus;
 
-    QPointF normaliseMouseCoord(QPoint p);
-    void mouseMoveEvent(QMouseEvent *event);
-
-    void drawFigure();
+    void drawFigure(int option);
     void setUpTriangles(int dimension);
     void initializeVertices();
 
     void updateProgressBar(int value, QString label);
-    void updateTrianglesLabel(QString label);
+    void updateTrianglesLabel(QString label, int option);
 
+    void loadBuffers();
+
+    //FILTHY DUPLICATE FROM DATA HANDLER
+    int calculateZoomSpeed(int dimension);
+
+
+    void wheelEvent(QWheelEvent *event);
 signals:
     void Si_SetProgressBarValue(int value);
     void Si_SetProgressBarLabel(QString label);
-    void Si_SetTrianglesLabel(QString label);
+    void Si_SetIceTrianglesLabel(QString label);
+    void Si_SetBedTrianglesLabel(QString label);
+    void Si_SetSurfaceTrianglesLabel(QString label);
 
 protected slots:
     void update();
@@ -109,8 +168,12 @@ public slots:
     void S_GetDrawOption(int option);
     void S_GetResOption(int option);
     void S_GetBgOption(int option);
-    void S_GetPointSizeOption(int option);
-
+    void S_GetPointSizeOption(int option);  
+    void S_GetZFactorOption(int option);
+    void S_GetIceSurfaceToggle(bool toggle);
+    void S_GetBedSurfaceToggle(bool toggle);
+    void S_GetSurfaceSurfaceToggle(bool toggle);
+    void S_GetZOffsetOption(int option);
 };
 
 #endif // CANVAS_H

@@ -40,6 +40,9 @@ public:
     const QQuaternion& rotation() const;
     const QMatrix4x4& toMatrix();
 
+    void ResetRotation();
+    void ResetTranslation();
+    void ResetTransform();
 private:
     bool m_dirty;
     QVector3D m_translation;

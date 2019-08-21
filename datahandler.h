@@ -27,8 +27,8 @@ public:
     void WriteVerticesToBin(int res, std::vector<Vertex> vertice);
     void WriteIndecesToBins(int res, std::vector<int> indeces);
 
-    std::vector<int> ReadIndecesFromBins(int res);
-    std::vector<Vertex> ReadVerticesFromBin(int res);
+    std::vector<int> ReadIndecesFromBins(int res, int option);
+    std::vector<Vertex> ReadVerticesFromBin(int res, int option);
 private:
     bool checkStringIsDigit(QString toCheck);
     float calculateNormal(Constants::Vector vec);

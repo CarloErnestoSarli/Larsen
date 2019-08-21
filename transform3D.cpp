@@ -45,6 +45,27 @@ void Transform3D::setRotation(const QQuaternion &r)
     m_rotation = r;
 }
 
+void Transform3D::ResetRotation()
+{
+    QQuaternion zero(1,0,0,0);
+    setRotation(zero);
+}
+
+void Transform3D::ResetTranslation()
+{
+    QVector3D zero(0,0,0);
+    setTranslation(zero);
+}
+
+
+void Transform3D::ResetTransform()
+{
+   ResetRotation();
+   ResetTranslation();
+}
+
+
+
 // Accessors
 const QMatrix4x4 &Transform3D::toMatrix()
 {

@@ -12,8 +12,21 @@ DataHandler::DataHandler()
 
 void DataHandler::Sampler(int samplingFactor)
 {
-    QString inputPath = "/home/carlo/Documents/bedmap2_ascii/bedmap2_thickness.txt";
-    QString outputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(factorToDimension(samplingFactor)) + ".csv";
+//    QString inputPath = "/home/carlo/Documents/bedmap2_ascii/bedmap2_thickness.txt";
+
+//    QString inputPath = "/home/carlo/Documents/bedmap2_ascii/bedmap2_bed.txt";
+
+    QString inputPath = "/home/carlo/Documents/bedmap2_ascii/bedmap2_surface.txt";
+
+//    QString inputPath = "/home/carlo/Documents/bedmap2_ascii/bedmap2_thickness.txt";
+
+//    QString outputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(factorToDimension(samplingFactor)) + ".csv";
+
+//    QString outputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(factorToDimension(samplingFactor)) + "bed.csv";
+
+    QString outputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(factorToDimension(samplingFactor)) + "surface.csv";
+
+//    QString outputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(factorToDimension(samplingFactor)) + ".csv";
 
     QFile input(inputPath);
     QFile output(outputPath);
@@ -109,9 +122,17 @@ void DataHandler::BinFileWithNormals(int res)
     float min = -1;
     float max = 46.21;
 
-    QString inputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(res) + ".csv";
-    //QString outputPath = "/home/carlo/Development/PhD/C++/test.raw";
-    std::string outputPath ="/home/carlo/Development/PhD/C++/Larsen/bins/sampled" + std::to_string(res) + ".raw";
+//    QString inputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(res) + ".csv";
+
+//    QString inputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(res) + "bed.csv";
+
+    QString inputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(res) + "surface.csv";
+
+//    std::string outputPath ="/home/carlo/Development/PhD/C++/Larsen/bins/sampled" + std::to_string(res) + ".raw";
+
+//    std::string outputPath ="/home/carlo/Development/PhD/C++/Larsen/bins/sampled" + std::to_string(res) + "bed.raw";
+
+    std::string outputPath ="/home/carlo/Development/PhD/C++/Larsen/bins/sampled" + std::to_string(res) + "surface.raw";
 
     QFile input(inputPath);
     //QFile output(outputPath);
@@ -165,7 +186,12 @@ std::vector<std::vector<float>> DataHandler::ReadPointsFromBinary(int res)
 
     std::vector<std::vector<float>> points(res);
 
-    std::string inputPath = "/home/carlo/Development/PhD/C++/Larsen/bins/sampled" + std::to_string(res) + ".raw";
+//    std::string inputPath = "/home/carlo/Development/PhD/C++/Larsen/bins/sampled" + std::to_string(res) + ".raw";
+
+    std::string inputPath = "/home/carlo/Development/PhD/C++/Larsen/bins/sampled" + std::to_string(res) + "bed.raw";
+
+//    std::string inputPath = "/home/carlo/Development/PhD/C++/Larsen/bins/sampled" + std::to_string(res) + "surface.raw";
+
 
     std::ifstream input(inputPath.c_str(), std::ios::binary);
 
@@ -194,7 +220,11 @@ std::vector<std::vector<float>> DataHandler::ReadPointsFromBinary(int res)
 
 void DataHandler::WriteVerticesToBin(int res, std::vector<Vertex> vertices )
 {
-    std::string outputPath = "/home/carlo/Development/PhD/C++/Larsen/vertices/vertices" + std::to_string(res) + ".bin";
+//    std::string outputPath = "/home/carlo/Development/PhD/C++/Larsen/vertices/vertices" + std::to_string(res) + ".bin";
+
+    std::string outputPath = "/home/carlo/Development/PhD/C++/Larsen/vertices/vertices" + std::to_string(res) + "bed.bin";
+
+//    std::string outputPath = "/home/carlo/Development/PhD/C++/Larsen/vertices/vertices" + std::to_string(res) + "surface.bin";
 
     std::ofstream output(outputPath.c_str(), std::ios::binary);
 
@@ -215,7 +245,11 @@ void DataHandler::WriteVerticesToBin(int res, std::vector<Vertex> vertices )
 
 void DataHandler::WriteIndecesToBins(int res, std::vector<int>indeces)
 {
-    std::string outputPath = "/home/carlo/Development/PhD/C++/Larsen/indeces/indeces" + std::to_string(res) + ".bin";
+//    std::string outputPath = "/home/carlo/Development/PhD/C++/Larsen/indeces/indeces" + std::to_string(res) + ".bin";
+
+    std::string outputPath = "/home/carlo/Development/PhD/C++/Larsen/indeces/indeces" + std::to_string(res) + "bed.bin";
+
+//    std::string outputPath = "/home/carlo/Development/PhD/C++/Larsen/indeces/indeces" + std::to_string(res) + "surface.bin";
 
     std::ofstream output(outputPath.c_str(), std::ios::binary);
 
@@ -234,10 +268,22 @@ void DataHandler::WriteIndecesToBins(int res, std::vector<int>indeces)
     output.close();
 }
 
-std::vector<Vertex> DataHandler::ReadVerticesFromBin(int res)
+std::vector<Vertex> DataHandler::ReadVerticesFromBin(int res, int option)
 {
     std::vector<Vertex> vertices;
-    std::string inputPath = "/home/carlo/Development/PhD/C++/Larsen/vertices/vertices" + std::to_string(res) + ".bin";
+    std::string inputPath;
+
+    switch (option) {
+    case 0:
+       inputPath  = "/home/carlo/Development/PhD/C++/Larsen/vertices/vertices" + std::to_string(res) + ".bin";
+        break;
+    case 1:
+       inputPath = "/home/carlo/Development/PhD/C++/Larsen/vertices/vertices" + std::to_string(res) + "bed.bin";
+        break;
+    case 2:
+        inputPath = "/home/carlo/Development/PhD/C++/Larsen/vertices/vertices" + std::to_string(res) + "surface.bin";
+        break;
+    }
 
     std::ifstream input(inputPath.c_str(), std::ios::binary);
 
@@ -259,10 +305,23 @@ std::vector<Vertex> DataHandler::ReadVerticesFromBin(int res)
     return vertices;
 }
 
-std::vector<int> DataHandler::ReadIndecesFromBins(int res)
+std::vector<int> DataHandler::ReadIndecesFromBins(int res, int option)
 {
     std::vector<int>indeces;
-    std::string inputPath = "/home/carlo/Development/PhD/C++/Larsen/indeces/indeces" + std::to_string(res) + ".bin";
+
+    std::string inputPath;
+
+    switch (option) {
+    case 0:
+       inputPath = "/home/carlo/Development/PhD/C++/Larsen/indeces/indeces" + std::to_string(res) + ".bin";
+        break;
+    case 1:
+      inputPath = "/home/carlo/Development/PhD/C++/Larsen/indeces/indeces" + std::to_string(res) + "bed.bin";
+        break;
+    case 2:
+        inputPath = "/home/carlo/Development/PhD/C++/Larsen/indeces/indeces" + std::to_string(res) + "surface.bin";
+        break;
+    }
 
     std::ifstream input(inputPath.c_str(), std::ios::binary);
 
