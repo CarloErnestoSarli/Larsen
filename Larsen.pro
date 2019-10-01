@@ -30,40 +30,42 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
-    geometrycontroller.cpp \
-    geometryworker.cpp \
+    colourmapdialog.cpp \
+    connector.cpp \
         main.cpp \
         mainwindow.cpp \
     datahandler.cpp \
     canvas.cpp \
+    samplerwindow.cpp \
     transform3D.cpp \
     camera3D.cpp \
     quad.cpp \
     triangle.cpp \
     colourmap.cpp \
-    quadrenderer.cpp \
     userinput.cpp \
     geometryprocessor.cpp
 
 HEADERS += \
-    geometrycontroller.h \
-    geometryworker.h \
+    colourmapdialog.h \
+    connector.h \
         mainwindow.h \
     datahandler.h \
     constants.h \
     canvas.h \
+    samplerwindow.h \
     vertex.h \
     transform3D.h \
     camera3D.h \
     quad.h \
     triangle.h \
     colourmap.h \
-    quadrenderer.h \
     userinput.h \
     geometryprocessor.h
 
 FORMS += \
-        mainwindow.ui
+        colourmapdialog.ui \
+        mainwindow.ui \
+        samplerwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

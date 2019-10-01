@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <QHash>
 #include <QHashFunctions>
-
+#include <QLocale>
 
 
 const float Constants::MIN_THICKNESS = -1;
@@ -24,6 +24,7 @@ Canvas::Canvas(QWidget *parent) : QOpenGLWidget(parent)
 {
     setMouseTracking(true);
     setFocusPolicy(Qt::StrongFocus);
+
     m_transform.translate(0, 0, 0);
     m_drawOption = 0;
     m_resOption = 52;
@@ -33,6 +34,12 @@ Canvas::Canvas(QWidget *parent) : QOpenGLWidget(parent)
     m_iceSurfaceToggled = false;
     m_bedSurfaceToggled = false;
     m_surfaceSurfaceToggled = false;
+    m_icemaskSurfaceToggled = false;
+    m_rockmaskSurfaceToggled = false;
+    m_samplingOption = 0;
+    m_iceThicknessMapSelection = 0;
+    m_bedMapSelection = 0;
+
     setUp = new GeometryProcessor();
     SetBgColour(Qt::gray);
     m_camera.ResetView(m_resOption/2,m_resOption/2, m_resOption*1.5);
@@ -168,6 +175,60 @@ void Canvas::initializeGL()
         m_surfaceIndex->release();
         m_surfaceVAO.release();
 
+        m_icemaskVAO.create();
+        m_icemaskVAO.bind();
+
+        m_icemaskVertex.create();
+        m_icemaskVertex.bind();
+        m_icemaskVertex.setUsagePattern(QOpenGLBuffer::StaticDraw);
+
+        m_icemaskIndex->create();
+        m_icemaskIndex->bind();
+        m_icemaskIndex->setUsagePattern(QOpenGLBuffer::StaticDraw);
+
+        m_program->enableAttributeArray(0);
+        m_program->setAttributeBuffer(0, GL_FLOAT, Vertex::positionOffset(), Vertex::PositionTupleSize, Vertex::stride());
+
+        m_program->enableAttributeArray(1);
+        m_program->setAttributeBuffer(1, GL_FLOAT, Vertex::colorOffset(), Vertex::ColorTupleSize, Vertex::stride());
+
+        m_program->enableAttributeArray(2);
+        m_program->setAttributeBuffer(2, GL_INT, 0, 3, sizeof(int));
+
+        m_program->enableAttributeArray(3);
+        m_program->setAttributeBuffer(3, GL_FLOAT, 0, 2);
+
+        m_icemaskVertex.release();
+        m_icemaskIndex->release();
+        m_icemaskVAO.release();
+
+        m_rockmaskVAO.create();
+        m_rockmaskVAO.bind();
+
+        m_rockmaskVertex.create();
+        m_rockmaskVertex.bind();
+        m_rockmaskVertex.setUsagePattern(QOpenGLBuffer::StaticDraw);
+
+        m_rockmaskIndex->create();
+        m_rockmaskIndex->bind();
+        m_rockmaskIndex->setUsagePattern(QOpenGLBuffer::StaticDraw);
+
+        m_program->enableAttributeArray(0);
+        m_program->setAttributeBuffer(0, GL_FLOAT, Vertex::positionOffset(), Vertex::PositionTupleSize, Vertex::stride());
+
+        m_program->enableAttributeArray(1);
+        m_program->setAttributeBuffer(1, GL_FLOAT, Vertex::colorOffset(), Vertex::ColorTupleSize, Vertex::stride());
+
+        m_program->enableAttributeArray(2);
+        m_program->setAttributeBuffer(2, GL_INT, 0, 3, sizeof(int));
+
+        m_program->enableAttributeArray(3);
+        m_program->setAttributeBuffer(3, GL_FLOAT, 0, 2);
+
+        m_rockmaskVertex.release();
+        m_rockmaskIndex->release();
+        m_rockmaskVAO.release();
+
         m_program->release();
 
     }
@@ -220,6 +281,20 @@ void Canvas::paintGL()
          }
         m_surfaceVAO.release();
 
+        m_icemaskVAO.bind();
+        if(GetIcemaskSurfaceToggled())
+        {
+            drawFigure(3);
+         }
+        m_icemaskVAO.release();
+
+        m_rockmaskVAO.bind();
+        if(GetRockmaskSurfaceToggled())
+        {
+            drawFigure(4);
+         }
+        m_rockmaskVAO.release();
+
     }
     m_program->release();
 }
@@ -255,15 +330,15 @@ void Canvas::update()
         {
             translation -= m_camera.forward()*zoomSpeed;
         }
+//        if (UserInput::keyPressed(Qt::Key_Left))
+//        {
+//            translation -= m_camera.right()*zoomSpeed;
+//        }
+//        if (UserInput::keyPressed(Qt::Key_Right))
+//        {
+//            translation += m_camera.right()*zoomSpeed;
+//        }
         if (UserInput::keyPressed(Qt::Key_Left))
-        {
-            translation -= m_camera.right()*zoomSpeed;
-        }
-        if (UserInput::keyPressed(Qt::Key_Right))
-        {
-            translation += m_camera.right()*zoomSpeed;
-        }
-        if (UserInput::keyPressed(Qt::Key_Q))
         {
             float centerX = this->width()/2;
             float centerY = this->height()/2;
@@ -274,9 +349,8 @@ void Canvas::update()
                                                                 1*
                                                                 amount);
             m_camera.rotate(axisRot);
-            //translation -= m_camera.up()*zoomSpeed;
         }
-        if (UserInput::keyPressed(Qt::Key_E))
+        if (UserInput::keyPressed(Qt::Key_Right))
         {
             float centerX = this->width()/2;
             float centerY = this->height()/2;
@@ -287,12 +361,11 @@ void Canvas::update()
                                                                 -1*
                                                                 amount);
             m_camera.rotate(axisRot);
-            //translation += m_camera.up()*zoomSpeed;
         }
         m_camera.translate(transSpeed * translation);
     }
     // Update instance information
-    //m_transform.rotate(1.0f, QVector3D(0.4f, 0.3f, 0.3f));
+
     if (UserInput::buttonPressed(Qt::LeftButton))
     {
         static const float rotSpeed   = 1.0f;
@@ -325,11 +398,11 @@ void Canvas::update()
 
     if (UserInput::buttonPressed(Qt::MiddleButton))
     {
-        //reset camera top
-        m_camera.ResetView(GetResOption()/2,GetResOption()/2, GetResOption()*1.5);
-        m_transform.ResetTransform();
-        SetZFactorOption(1);
-        SetZOffsetOption(1);
+        resetZoom();
+        resetRotation();
+        resetTransform();
+        resetScale();
+        resetTranslation();
     }
 
     // Schedule a redraw
@@ -357,6 +430,8 @@ void Canvas::tearDownGL()
     m_iceVAO.destroy();
     m_bedVAO.destroy();
     m_surfaceVAO.destroy();
+    m_icemaskVAO.destroy();
+    m_rockmaskVAO.destroy();
 
     m_iceVertex.destroy();
     m_iceIndex->destroy();
@@ -364,6 +439,10 @@ void Canvas::tearDownGL()
     m_bedIndex->destroy();
     m_surfaceVertex.destroy();
     m_surfaceIndex->destroy();
+    m_icemaskVertex.destroy();
+    m_icemaskIndex->destroy();
+    m_rockmaskVertex.destroy();
+    m_rockmaskIndex->destroy();
 
     delete m_program;
 }
@@ -371,7 +450,8 @@ void Canvas::tearDownGL()
 /////////////INITIALIZE///////////
 void Canvas::initializeVertices()
 {
-    updateProgressBar(10, "initializing");
+
+    o_data->SetOption(m_samplingOption);
 
     std::vector<Vertex> iceVerteces = o_data->ReadVerticesFromBin(GetResOption(), 0);
     std::vector<int> iceIndeces  = o_data->ReadIndecesFromBins(GetResOption(), 0);
@@ -382,47 +462,11 @@ void Canvas::initializeVertices()
     std::vector<Vertex> surfaceVerteces = o_data->ReadVerticesFromBin(GetResOption(), 2);
     std::vector<int> surfaceIndeces  = o_data->ReadIndecesFromBins(GetResOption(), 2);
 
-//    std::vector<Vertex> triVerteces;
-//    std::vector<int> triIndeces;
+    std::vector<Vertex> icemaskVerteces = o_data->ReadVerticesFromBin(GetResOption(), 3);
+    std::vector<int> icemaskIndeces  = o_data->ReadIndecesFromBins(GetResOption(), 3);
 
-    QElapsedTimer timer;
-    timer.start();
-
-     //add ice to rock
-//    std::vector<Vertex> newiceVerteces;
-
-//    for(auto ice : iceVerteces)
-//    {
-//        for(auto bed : bedVerteces)
-//        {
-//            if(ice.position().x() == bed.position().x() && ice.position().y() == bed.position().y())
-//            {
-//                qDebug() << "true" << ice.position().z();
-//                QVector3D position (ice.position().x(), ice.position().y(),  ice.position().z() +bed.position().z());
-//                ice.setPosition(position);
-//                qDebug() <<"lol" << ice.position().z() << bed.position().z();
-//            }
-//        }
-//        newiceVerteces.push_back(ice);
-//    }
-
-
-
-//    setUp->CreateTriangles(GetResOption());
-//    triIndeces = setUp->GetTriIndeces();
-
-//    QList<QVector3D> list = setUp->GetVertList();
-//    for(auto l : list)
-//    {
-//        int index =  o_data->Normalize(0, Constants::MAX_THICKNESS, 0, 9, l.z());
-
-//        QColor colour = o_cMap->GetColourFromSurfaceMap(9-index);
-//        QVector3D *col = new QVector3D(colour.redF(), colour.greenF(), colour.blueF());
-//        triVerteces.push_back(Vertex(l, *col));
-//    }
-//    SetTriIndeces(setUp->GetTriIndeces());
-//    SetTriVerteces(triVerteces);
-
+    std::vector<Vertex> rockmaskVerteces = o_data->ReadVerticesFromBin(GetResOption(), 4);
+    std::vector<int> rockmaskIndeces  = o_data->ReadIndecesFromBins(GetResOption(), 4);
 
     SetIceIndeces(iceIndeces);
     SetIceVerteces(iceVerteces);
@@ -433,15 +477,29 @@ void Canvas::initializeVertices()
     SetSurfaceIndeces(surfaceIndeces);
     SetSurfaceVerteces(surfaceVerteces);
 
-     updateTrianglesLabel("Triangles Rendered: " + QString::number(iceIndeces.size()/3),0);
-     updateTrianglesLabel("Triangles Rendered: " + QString::number(bedIndeces.size()/3),1);
-     updateTrianglesLabel("Triangles Rendered: " + QString::number(surfaceIndeces.size()/3),2);
+    SetIcemaskIndeces(icemaskIndeces);
+    SetIcemaskVerteces(icemaskVerteces);
 
-//    o_data->WriteIndecesToBins(6667,triIndeces);
-//    o_data->WriteVerticesToBin(6667, triVerteces);
+    SetRockmaskIndeces(rockmaskIndeces);
+    SetRockmaskVerteces(rockmaskVerteces);
 
-//    o_data->WriteIndecesToBins(GetResOption(),triIndeces);
-//    o_data->WriteVerticesToBin(GetResOption(), triVerteces);
+    QLocale l = QLocale::system();
+    int iceI = iceIndeces.size()/3;
+    QString iceS = l.toString(iceI);
+    int bedI = bedIndeces.size()/3;
+    QString bedS = l.toString(bedI);
+    int surI = surfaceIndeces.size()/3;
+    QString surS = l.toString(surI);
+    int icemaskI = icemaskIndeces.size()/3;
+    QString icemaskS = l.toString(icemaskI);
+    int rockmaskI = rockmaskIndeces.size()/3;
+    QString rockmaskS = l.toString(rockmaskI);
+
+    updateTrianglesLabel("Triangles Rendered: " + iceS ,0);
+    updateTrianglesLabel("Triangles Rendered: " + bedS ,1);
+    updateTrianglesLabel("Triangles Rendered: " + surS, 2);
+    updateTrianglesLabel("Triangles Rendered: " + icemaskS, 3);
+    updateTrianglesLabel("Triangles Rendered: " + rockmaskS, 3);
 
 }
 
@@ -453,7 +511,11 @@ void Canvas::loadBuffers()
     std::vector<Vertex> bedVerteces = GetBedVerteces();
     std::vector<int> bedIndeces = GetBedIndeces();
     std::vector<Vertex> surfaceVerteces = GetSurfaceVerteces();
-    std::vector<int> surfaceIndeces = GetSurfaceIndeces();
+    std::vector<int> surfaceIndeces = GetSurfaceIndeces(); 
+    std::vector<Vertex> icemaskVerteces = GetIcemaskVerteces();
+    std::vector<int> icemaskIndeces = GetIcemaskIndeces();
+    std::vector<Vertex> rockmaskVerteces = GetRockmaskVerteces();
+    std::vector<int> rockmaskIndeces = GetRockmaskIndeces();
 
     m_iceVertex.bind();
     m_iceVertex.allocate(iceVerteces.data(), iceVerteces.size() * sizeof(Vertex) );
@@ -478,6 +540,22 @@ void Canvas::loadBuffers()
     m_surfaceIndex->bind();
     m_surfaceIndex->allocate(surfaceIndeces.data(), surfaceIndeces.size() * sizeof(int));
     m_surfaceIndex->release();
+
+    m_icemaskVertex.bind();
+    m_icemaskVertex.allocate(icemaskVerteces.data(), icemaskVerteces.size() * sizeof(Vertex) );
+    m_icemaskVertex.release();
+
+    m_icemaskIndex->bind();
+    m_icemaskIndex->allocate(icemaskIndeces.data(), icemaskIndeces.size() * sizeof(int));
+    m_icemaskIndex->release();
+
+    m_rockmaskVertex.bind();
+    m_rockmaskVertex.allocate(rockmaskVerteces.data(), rockmaskVerteces.size() * sizeof(Vertex) );
+    m_rockmaskVertex.release();
+
+    m_rockmaskIndex->bind();
+    m_rockmaskIndex->allocate(rockmaskIndeces.data(), rockmaskIndeces.size() * sizeof(int));
+    m_rockmaskIndex->release();
 }
 
 /////////////DRAW/////////////////
@@ -490,22 +568,27 @@ void Canvas::drawFigure(int option)
     int pointSize = m_program->uniformLocation("pointSize");
     m_program->setUniformValue(pointSize, point);
 
-    GLint zFactor = GetZFactorOption();
+    GLint zFactor = GetZFactorOption() * calculateZoomSpeed(GetResOption());
     int zFactorValue = m_program->uniformLocation("zFactorValue");
     m_program->setUniformValue(zFactorValue, zFactor);
+
+    GLint iceThicknessMapSel = m_iceThicknessMapSelection;
+    int iceThicknessMapSelValue = m_program->uniformLocation("iceThicknessMapSelValue");
+    m_program->setUniformValue(iceThicknessMapSelValue, iceThicknessMapSel);
+
+    GLint bedMapSel = m_bedMapSelection;
+    int bedMapSelValue = m_program->uniformLocation("bedMapSelValue");
+    m_program->setUniformValue(bedMapSelValue, bedMapSel);
 
     GLint zOffset = 1;
 
     GLint surface = 1;
 
-
-
     switch (option) {
     case 0:
-
        size = m_iceIndeces.size();
         m_iceIndex->bind();
-        zOffset = GetZOffsetOption();
+        zOffset = GetZOffsetOption() * calculateZoomSpeed(GetResOption());
         surface = 0;
         break;
     case 1:
@@ -517,6 +600,16 @@ void Canvas::drawFigure(int option)
         size = m_surfaceIndeces.size();
         m_surfaceIndex->bind();
         surface = 2;
+        break;     
+    case 3:
+        size = m_icemaskIndeces.size();
+        m_icemaskIndex->bind();
+        surface = 3;
+        break;
+    case 4:
+        size = m_rockmaskIndeces.size();
+        m_rockmaskIndex->bind();
+        surface = 4;
         break;
     }
 
@@ -549,9 +642,43 @@ void Canvas::drawFigure(int option)
     case 2:
         m_surfaceIndex->release();
         break;
+    case 3:
+        m_icemaskIndex->release();
+        break;
+    case 4:
+        m_rockmaskIndex->release();
+        break;
     }
 
 }
+
+void Canvas::resetRotation()
+{
+    m_camera.ResetView(GetResOption()/2,GetResOption()/2, m_camera.translation().z());
+}
+
+void Canvas::resetTransform()
+{
+        m_transform.ResetTransform();
+}
+
+void Canvas::resetZoom()
+{
+    m_camera.ResetView(m_camera.translation().x(),m_camera.translation().y(), GetResOption()*1.5);
+}
+
+void Canvas::resetScale()
+{
+    SetZFactorOption(Constants::SCALE_DEFAULT);
+    emit Si_SetZFactorOption(Constants::SCALE_DEFAULT);
+}
+
+void Canvas::resetTranslation()
+{
+    SetZOffsetOption(Constants::TRANSLATION_DEFAULT);
+    emit Si_SetZOffsetOption(Constants::TRANSLATION_DEFAULT);
+}
+
 
 /////////////EVENTS/////////////////
 
@@ -588,6 +715,307 @@ void Canvas::mouseReleaseEvent(QMouseEvent *event)
 {
     UserInput::registerMouseRelease(event->button());
 }
+
+/////////////SIGNALS////////////////
+void Canvas::updateProgressBar(int value, QString label)
+{
+    SetProgressValue(value);
+    SetProgressStatus(label);
+    emit Si_SetProgressBarLabel(GetProgressStatus());
+    emit Si_SetProgressBarValue(GetProgressValue());
+
+}
+
+void Canvas::updateTrianglesLabel(QString label, int option)
+{
+    switch(option)
+    {
+    case 0:
+        emit Si_SetIceTrianglesLabel(label);
+        break;
+    case 1:
+        emit Si_SetBedTrianglesLabel(label);
+        break;
+    case 2:
+        emit Si_SetSurfaceTrianglesLabel(label);
+        break;
+    case 3:
+        emit Si_SetIcemaskTrianglesLabel(label);
+        break;
+    case 4:
+        emit Si_SetRockmaskTrianglesLabel(label);
+        break;
+    }
+}
+
+/////////////SLOTS/////////////////
+void Canvas::S_GetDrawOption(int option)
+{
+    SetDrawOption(option);
+}
+
+void Canvas::S_GetResOption(int option)
+{
+    int res;
+
+    if(m_samplingOption == 0)
+    {
+        switch(option)
+        {
+        case 0:
+            res = 52;
+            break;
+        case 1:
+            res = 103;
+            break;
+        case 2:
+            res = 203;
+            break;
+        case 3:
+            res = 393;
+            break;
+        case 4:
+            res = 741;
+            break;
+        case 5:
+            res = 1334;
+            break;
+        case 6:
+            res = 2223;
+            break;
+        case 7:
+            res = 3334;
+            break;
+        case 8:
+            res = 6667;
+            break;
+        }
+    }else {
+        switch(option)
+        {
+        case 0:
+            res = 52;
+            break;
+        case 1:
+            res = 104;
+            break;
+        case 2:
+            res = 208;
+            break;
+        case 3:
+            res = 416;
+            break;
+        case 4:
+            res = 833;
+            break;
+        case 5:
+            res = 1666;
+            break;
+        case 6:
+            res = 2223;
+            break;
+        case 7:
+            res = 3333;
+            break;
+        }
+    }
+
+    SetResOption(res);
+    initializeVertices();
+    loadBuffers();
+    float z = m_camera.translation().z();
+    m_camera.ResetView(res/2,res/2, z);
+    SetZFactorOption(1);
+    SetZOffsetOption(1);
+    //m_transform.ResetTransform();
+    update();
+}
+
+void Canvas::S_GetBgOption(int option)
+{
+    QColor bgColour;
+
+    switch(option)
+    {
+    case 0:
+        bgColour = Qt::gray;
+        break;
+    case 1:
+        bgColour = Qt::blue;
+        break;
+    case 2:
+        bgColour = Qt::green;
+        break;
+    case 3:
+        bgColour = Qt::black;
+        break;
+    case 4:
+        bgColour = Qt::white;
+        break;
+    }
+
+    SetBgColour(bgColour);
+    update();
+}
+
+void Canvas::S_GetPointSizeOption(int option)
+{
+    SetPointSizeOption(option);
+}
+
+void Canvas::S_GetZFactorOption(int option)
+{
+    SetZFactorOption(option);
+}
+
+void Canvas::S_GetZOffsetOption(int option)
+{
+    SetZOffsetOption(option);
+}
+
+void Canvas::S_GetIceSurfaceToggle(bool toggle)
+{
+    SetIceSurfaceToggled(toggle);
+}
+
+void Canvas::S_GetBedSurfaceToggle(bool toggle)
+{
+    SetBedSurfaceToggled(toggle);
+}
+
+void Canvas::S_GetSurfaceSurfaceToggle(bool toggle)
+{
+    SetSurfaceSurfaceToggled(toggle);
+}
+
+void Canvas::S_GetIcemaskSurfaceToggle(bool toggle)
+{
+    SetIcemaskSurfaceToggled(toggle);
+}
+
+void Canvas::S_GetRockmaskSurfaceToggle(bool toggle)
+{
+    SetRockmaskSurfaceToggled(toggle);
+}
+
+void Canvas::S_GetMenuResetRotAction()
+{
+    resetRotation();
+}
+
+void Canvas::S_GetMenuResetZoomAction()
+{
+    resetZoom();
+}
+
+void Canvas::S_GetMenuResetTransformAction()
+{
+    resetTransform();
+}
+
+void Canvas::S_GetSamplingOption()
+{
+    int option;
+    if(m_samplingOption == 0)
+    {
+        option = 1;
+    }else {
+        option = 0;
+    }
+    SetSamplingOption(option);
+}
+
+void Canvas::S_GetMenuResetScaleAction()
+{
+    resetScale();
+}
+
+void Canvas::S_GetMenuResetTranAction()
+{
+    resetTranslation();
+}
+
+void Canvas::S_GetIceThicknessMap(int map)
+{
+    m_iceThicknessMapSelection = map;
+}
+
+void Canvas::S_GetBedMap(int map)
+{
+    m_bedMapSelection = map;
+}
+
+//FILTHY DUPLICATE FUNCTION FROM DATA HANDLER
+
+
+int Canvas::calculateZoomSpeed(int dimension)
+{
+    int speed;
+    if(m_samplingOption == 0)
+    {
+        switch (dimension)
+        {
+        case 52:
+            speed = 1;
+            break;
+        case 103:
+            speed = 2;
+            break;
+        case 203:
+            speed = 4;
+            break;
+        case 393:
+            speed = 8;
+            break;
+        case 741:
+            speed = 16;
+            break;
+        case 1334:
+            speed = 32;
+            break;
+        case 2223:
+            speed = 2*64;
+            break;
+        case 3334:
+            speed = 4*128;
+            break;
+        case 6667:
+            speed = 8*256;
+            break;
+        }
+    }else {
+        switch(dimension)
+        {
+        case 52:
+            speed = 52;
+            break;
+        case 104:
+            speed = 2;
+            break;
+        case 208:
+            speed = 4;
+            break;
+        case 416:
+            speed = 8;
+            break;
+        case 833:
+            speed = 16;
+            break;
+        case 1666:
+            speed = 32;
+            break;
+        case 2223:
+            speed = 64;
+            break;
+        case 3333:
+            speed = 128;
+            break;
+        }
+    }
+
+    return speed;
+}
+
 
 /////////////ACCESSORS/////////////////
 
@@ -714,6 +1142,48 @@ void Canvas::SetSurfaceVerteces(std::vector<Vertex> surfaceVerteces)
     m_surfaceVerteces = surfaceVerteces;
 }
 
+std::vector<int> Canvas::GetIcemaskIndeces()
+{
+    return m_icemaskIndeces;
+}
+
+
+void Canvas::SetIcemaskIndeces(std::vector<int> icemaskIndeces)
+{
+    m_icemaskIndeces = icemaskIndeces;
+}
+
+std::vector<Vertex> Canvas::GetIcemaskVerteces()
+{
+    return m_icemaskVerteces;
+}
+
+void Canvas::SetIcemaskVerteces(std::vector<Vertex> icemaskVerteces)
+{
+    m_icemaskVerteces = icemaskVerteces;
+}
+
+std::vector<int> Canvas::GetRockmaskIndeces()
+{
+    return m_rockmaskIndeces;
+}
+
+
+void Canvas::SetRockmaskIndeces(std::vector<int> rockmaskIndeces)
+{
+    m_rockmaskIndeces = rockmaskIndeces;
+}
+
+std::vector<Vertex> Canvas::GetRockmaskVerteces()
+{
+    return m_rockmaskVerteces;
+}
+
+void Canvas::SetRockmaskVerteces(std::vector<Vertex> rockmaskVerteces)
+{
+    m_rockmaskVerteces = rockmaskVerteces;
+}
+
 QString Canvas::GetProgressStatus()
 {
     return m_progressStatus;
@@ -774,178 +1244,33 @@ void Canvas::SetIceSurfaceToggled(bool iceSurfaceToggled)
     m_iceSurfaceToggled = iceSurfaceToggled;
 }
 
-
-/////////////SIGNALS////////////////
-void Canvas::updateProgressBar(int value, QString label)
+bool Canvas::GetIcemaskSurfaceToggled() const
 {
-    SetProgressValue(value);
-    SetProgressStatus(label);
-    emit Si_SetProgressBarLabel(GetProgressStatus());
-    emit Si_SetProgressBarValue(GetProgressValue());
-
+    return m_icemaskSurfaceToggled;
 }
 
-void Canvas::updateTrianglesLabel(QString label, int option)
+void Canvas::SetIcemaskSurfaceToggled(bool icemaskSurfaceToggled)
 {
-    switch(option)
-    {
-    case 0:
-        emit Si_SetIceTrianglesLabel(label);
-        break;
-    case 1:
-        emit Si_SetBedTrianglesLabel(label);
-        break;
-    case 2:
-        emit Si_SetSurfaceTrianglesLabel(label);
-        break;
-    }
+    m_icemaskSurfaceToggled = icemaskSurfaceToggled;
 }
 
-/////////////SLOTS/////////////////
-void Canvas::S_GetDrawOption(int option)
+bool Canvas::GetRockmaskSurfaceToggled() const
 {
-    SetDrawOption(option);
+    return m_rockmaskSurfaceToggled;
 }
 
-void Canvas::S_GetResOption(int option)
+void Canvas::SetRockmaskSurfaceToggled(bool rockmaskSurfaceToggled)
 {
-    int res;
-
-    switch(option)
-    {
-    case 0:
-        res = 52;
-        break;
-    case 1:
-        res = 103;
-        break;
-    case 2:
-        res = 203;
-        break;
-    case 3:
-        res = 393;
-        break;
-    case 4:
-        res = 741;
-        break;
-    case 5:
-        res = 1334;
-        break;
-    case 6:
-        res = 2223;
-        break;
-    case 7:
-        res = 3334;
-        break;
-    case 8:
-        res = 6667;
-        break;
-    }
-    SetResOption(res);
-    initializeVertices();
-    loadBuffers();
-    float z = m_camera.translation().z();
-    m_camera.ResetView(res/2,res/2, z);
-    SetZFactorOption(1);
-    SetZOffsetOption(1);
-    //m_transform.ResetTransform();
-    update();
+    m_rockmaskSurfaceToggled = rockmaskSurfaceToggled;
 }
 
-void Canvas::S_GetBgOption(int option)
+int Canvas::GetSamplingOption()
 {
-    QColor bgColour;
-
-    switch(option)
-    {
-    case 0:
-        bgColour = Qt::gray;
-        break;
-    case 1:
-        bgColour = Qt::blue;
-        break;
-    case 2:
-        bgColour = Qt::green;
-        break;
-    case 3:
-        bgColour = Qt::black;
-        break;
-    case 4:
-        bgColour = Qt::white;
-        break;
-    }
-
-    SetBgColour(bgColour);
-    update();
+    return m_samplingOption;
 }
 
-void Canvas::S_GetPointSizeOption(int option)
+void Canvas::SetSamplingOption(int option)
 {
-    SetPointSizeOption(option);
-}
-
-void Canvas::S_GetZFactorOption(int option)
-{
-    SetZFactorOption(option);
-}
-
-void Canvas::S_GetZOffsetOption(int option)
-{
-    SetZOffsetOption(option);
-}
-
-void Canvas::S_GetIceSurfaceToggle(bool toggle)
-{
-    SetIceSurfaceToggled(toggle);
-}
-
-void Canvas::S_GetBedSurfaceToggle(bool toggle)
-{
-    SetBedSurfaceToggled(toggle);
-}
-
-void Canvas::S_GetSurfaceSurfaceToggle(bool toggle)
-{
-    SetSurfaceSurfaceToggled(toggle);
-}
-
-//FILTHY DUPLICATE FUNCTION FROM DATA HANDLER
-
-
-int Canvas::calculateZoomSpeed(int dimension)
-{
-    int speed;
-    switch (dimension)
-    {
-    case 52:
-        speed = 1;
-        break;
-    case 103:
-        speed = 2;
-        break;
-    case 203:
-        speed = 4;
-        break;
-    case 393:
-        speed = 8;
-        break;
-    case 741:
-        speed = 16;
-        break;
-    case 1334:
-        speed = 32;
-        break;
-    case 2223:
-        speed = 2*64;
-        break;
-    case 3334:
-        speed = 4*128;
-        break;
-    case 6667:
-        speed = 8*256;
-        break;
-    }
-
-    return speed;
+     m_samplingOption = option;
 }
 

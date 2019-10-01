@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SamplerWindow</class>
+ <widget class="QWidget" name="SamplerWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Sampler</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="4" column="0">
+    <widget class="QCheckBox" name="cb_iceThickness">
+     <property name="text">
+      <string>Ice Thickness</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="l_samplingType">
+     <property name="text">
+      <string>Sampling Type</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="l_dataset">
+     <property name="text">
+      <string>Dataset Selection</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <widget class="QCheckBox" name="cb_iceMask">
+     <property name="text">
+      <string>Ice Mask</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QCheckBox" name="cb_bed">
+     <property name="text">
+      <string>Bedrock</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QCheckBox" name="cb_surface">
+     <property name="text">
+      <string>Surface</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QComboBox" name="cb_samplingType">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <property name="maxVisibleItems">
+      <number>2</number>
+     </property>
+     <item>
+      <property name="text">
+       <string>Sub Sampling</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Average Sampling</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="10" column="0">
+    <widget class="QProgressBar" name="pb_sampler">
+     <property name="value">
+      <number>24</number>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0">
+    <widget class="QLabel" name="l_progress">
+     <property name="text">
+      <string>Progress</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0">
+    <widget class="QPushButton" name="samplerButton">
+     <property name="text">
+      <string>Sample</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>cb_samplingType</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>SamplerWindow</receiver>
+   <slot>s_getSamplingOption(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>116</x>
+     <y>48</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>401</x>
+     <y>53</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cb_bed</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SamplerWindow</receiver>
+   <slot>s_getBedToggle(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>199</x>
+     <y>133</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cb_surface</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SamplerWindow</receiver>
+   <slot>s_getSurfaceToggle(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>199</x>
+     <y>162</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cb_iceMask</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SamplerWindow</receiver>
+   <slot>s_getIceMaskToggle(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>199</x>
+     <y>191</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cb_iceThickness</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>SamplerWindow</receiver>
+   <slot>s_getIceThicknessToggle(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>67</x>
+     <y>102</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>358</x>
+     <y>119</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>s_getSamplingOption(int)</slot>
+  <slot>s_getIceThicknessToggle(bool)</slot>
+  <slot>s_getBedToggle(bool)</slot>
+  <slot>s_getSurfaceToggle(bool)</slot>
+  <slot>s_getIceMaskToggle(bool)</slot>
+ </slots>
+</ui>

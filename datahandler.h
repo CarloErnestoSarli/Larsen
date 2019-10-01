@@ -1,3 +1,12 @@
+/**
+ * @file camera3D.h
+ * @author Carlo Sarli
+ * @date 30 August 2019
+ * @brief This class provides Camera functionalty for  the canvas.
+ *
+ * Detailed description goes here.
+ */
+
 #ifndef DATAHANDLER_H
 #define DATAHANDLER_H
 
@@ -14,7 +23,16 @@
 class DataHandler
 {
 public:
+    /**
+     * @brief DataHandler
+     */
     DataHandler();
+
+    /**
+     * @brief DataHandler overloaded constructor
+     * @param option the dataset option
+     */
+    DataHandler(int option);
 
     void Sampler(int samplingSFactor);
     void BinFileWithNormals(int res);
@@ -29,13 +47,22 @@ public:
 
     std::vector<int> ReadIndecesFromBins(int res, int option);
     std::vector<Vertex> ReadVerticesFromBin(int res, int option);
+    void AverageSampler(int recursion);
+
+    void SetOption(int option);
+    int GetOption();
+
 private:
+
+    int m_option;
+
     bool checkStringIsDigit(QString toCheck);
     float calculateNormal(Constants::Vector vec);
 
 
     int dimensionToFactor(int dimension);
     int factorToDimension(int factor);
+    int recursionToDimension(int factor);
 };
 
 #endif // DATAHANDLER_H

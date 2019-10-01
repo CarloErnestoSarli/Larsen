@@ -2,5 +2,11 @@
     <qresource prefix="/">
         <file>shaders/simple.frag</file>
         <file>shaders/simple.vert</file>
+        <file>images/CM1IceThickness.png</file>
+        <file>images/CM2IceThickness.png</file>
+        <file>images/CM3IceThickness.png</file>
+        <file>images/CM3Bed.png</file>
+        <file>images/CM2Bed.png</file>
+        <file>images/CM1Bed.png</file>
     </qresource>
 </RCC>

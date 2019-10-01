@@ -7,26 +7,45 @@
 
 DataHandler::DataHandler()
 {
+}
 
+DataHandler::DataHandler(int option)
+{
+    m_option = option;
 }
 
 void DataHandler::Sampler(int samplingFactor)
 {
-//    QString inputPath = "/home/carlo/Documents/bedmap2_ascii/bedmap2_thickness.txt";
+    QString inputPath;
+    QString outputPath;
 
-//    QString inputPath = "/home/carlo/Documents/bedmap2_ascii/bedmap2_bed.txt";
+    switch (m_option) {
+    case 0:
+        inputPath = "/home/carlo/Documents/bedmap2_ascii/bedmap2_thickness.txt";
+        outputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(factorToDimension(samplingFactor)) + "iceThickness.csv";
+        break;
+    case 1:
+        inputPath = "/home/carlo/Documents/bedmap2_ascii/bedmap2_bed.txt";
+        outputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(factorToDimension(samplingFactor)) + "bed.csv";
+        break;
+    case 2:
+        inputPath = "/home/carlo/Documents/bedmap2_ascii/bedmap2_surface.txt";
+        outputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(factorToDimension(samplingFactor)) + "surface.csv";
+        break;
+    case 3:
+        inputPath = "/home/carlo/Documents/bedmap2_ascii/bedmap2_icemask_grounded_and_shelves.txt";
+        outputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(factorToDimension(samplingFactor)) + "icemask.csv";
+        break;
+    }
 
-    QString inputPath = "/home/carlo/Documents/bedmap2_ascii/bedmap2_surface.txt";
+    //     inputPath = "/home/carlo/Documents/bedmap2_ascii/bedmap2_rockmask.txt";
 
-//    QString inputPath = "/home/carlo/Documents/bedmap2_ascii/bedmap2_thickness.txt";
+    //     inputPath = "/home/carlo/Documents/bedmap2_ascii/bedmap2_lakemask_vostok.txt";
 
-//    QString outputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(factorToDimension(samplingFactor)) + ".csv";
+    //     outputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(factorToDimension(samplingFactor)) + "rockmask.csv";
 
-//    QString outputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(factorToDimension(samplingFactor)) + "bed.csv";
+    //    outputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(factorToDimension(samplingFactor)) + "lakemask.csv";
 
-    QString outputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(factorToDimension(samplingFactor)) + "surface.csv";
-
-//    QString outputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(factorToDimension(samplingFactor)) + ".csv";
 
     QFile input(inputPath);
     QFile output(outputPath);
@@ -114,6 +133,178 @@ void DataHandler::Sampler(int samplingFactor)
     }
 }
 
+void DataHandler::AverageSampler(int recursion)
+{
+    if(recursion <= 6)
+    {
+        QString inputPath;
+        QString outputPath;
+
+        switch (m_option) {
+        case 0:
+            if(recursion == 0)
+            {
+                inputPath = "/home/carlo/Documents/bedmap2_ascii/bedmap2_thickness.txt";
+            }else
+            {
+                inputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(recursionToDimension(recursion)) + "iceThickness.csv";
+            }
+            outputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(recursionToDimension(recursion+1)) + "iceThickness.csv";
+            break;
+        case 1:
+            if(recursion == 0)
+            {
+                inputPath = "/home/carlo/Documents/bedmap2_ascii/bedmap2_bed.txt";
+            }else
+            {
+                inputPath =  "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(recursionToDimension(recursion)) + "bed.csv";
+            }
+            outputPath=  "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(recursionToDimension(recursion+1)) + "bed.csv";
+            break;
+        case 2:
+            if(recursion == 0)
+            {
+                inputPath = "/home/carlo/Documents/bedmap2_ascii/bedmap2_surface.txt";
+            }else
+            {
+                inputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(recursionToDimension(recursion)) + "surface.csv";
+            }
+            outputPath =outputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(recursionToDimension(recursion+1)) + "surface.csv";;
+            break;
+        case 3:
+            if(recursion == 0)
+            {
+                inputPath = "/home/carlo/Documents/bedmap2_ascii/bedmap2_icemask_grounded_and_shelves.txt";
+            }else
+            {
+                inputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(recursionToDimension(recursion)) + "icemask.csv";
+            }
+            outputPath =outputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(recursionToDimension(recursion+1)) + "icemask.csv";
+            break;
+        }
+
+        //     inputPath = "/home/carlo/Documents/bedmap2_ascii/bedmap2_rockmask.txt";
+
+        //                 inputPath = "/home/carlo/Documents/bedmap2_ascii/bedmap2_lakemask_vostok.txt";
+
+
+        //     outputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(recursionToDimension(recursion)) + "rockmask.csv";
+
+        //                 outputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(recursionToDimension(recursion)) + "lakemask.csv";
+
+        QFile input(inputPath);
+        QFile output(outputPath);
+
+        if(!input.open(QFile::ReadOnly | QFile::Text) | !output.open(QFile::WriteOnly | QFile::Truncate))
+        {
+            qDebug() << "File(s) do(es) not exist(s)";
+        }else
+        {
+            QTextStream in(&input);
+            QTextStream out(&output);
+
+            if(recursion == 0)
+            {
+                //skip header
+                for(int i = 0; i < 6; i++)
+                {
+                    in.readLine();
+                }
+            }
+
+            int z = 0;
+            int fileLength = recursionToDimension(recursion)-1;
+
+            while(!in.atEnd())
+            {
+                QString line;
+                QString line2;
+
+                line = in.readLine();
+                line2 = in.readLine();
+
+                QStringList inColumns;
+                QStringList inColumns2;
+
+                if(recursion == 0)
+                {
+                    inColumns = line.split(" ");
+                    inColumns2 = line2.split(" ");
+                }else {
+                    inColumns = line.split(",");
+                     inColumns2 = line2.split(",");
+                }
+
+                QStringList outColumns;
+
+                int columnsNumber = inColumns.size();
+                if(inColumns2.size() == columnsNumber)
+                {
+                    for (int x = 0; x < columnsNumber-2; ++x) {
+                        QString value1= inColumns.at(x) ;
+                        QString value2= inColumns.at(x+1);
+                        QString value3= inColumns2.at(x);
+                        QString value4= inColumns2.at(x+1);
+
+                        if(value1 == "-9999")
+                        {
+                            value1 = "-1";
+                        }
+                        if(value2 == "-9999")
+                        {
+                            value2 = "-1";
+                        }
+                        if(value3 == "-9999")
+                        {
+                            value3 = "-1";
+                        }
+                        if(value4 == "-9999")
+                        {
+                            value4 = "-1";
+                        }
+
+                        if(checkStringIsDigit(value1) && checkStringIsDigit(value2) && checkStringIsDigit(value3) && checkStringIsDigit(value4))
+                        {
+                            float average = (value1.toInt() + value2.toInt() + value3.toInt() + value4.toInt())/4;
+                            outColumns.append(QString::number(average));
+                        }
+
+                        ++x;
+
+                    }
+
+                    for(auto it : outColumns)
+                    {
+                        out << it << ",";
+                    }
+                    out << endl;
+                }
+
+                z++;
+
+            }
+
+            input.close();
+            output.close();
+
+        }
+
+        recursion ++;
+        AverageSampler(recursion);
+    }
+
+}
+
+void DataHandler::SetOption(int option)
+{
+    m_option = option;
+}
+
+int DataHandler::GetOption()
+{
+    return m_option;
+}
+
 
 void DataHandler::BinFileWithNormals(int res)
 {
@@ -122,25 +313,41 @@ void DataHandler::BinFileWithNormals(int res)
     float min = -1;
     float max = 46.21;
 
-//    QString inputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(res) + ".csv";
+    QString inputPath;
+    std::string outputPath;
 
-//    QString inputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(res) + "bed.csv";
+    switch (m_option) {
+    case 0:
+        inputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(res) + "iceThickness.csv";
+        outputPath ="/home/carlo/Development/PhD/C++/Larsen/bins/sampled" + std::to_string(res) + "iceThickness.raw";
+        break;
+    case 1:
+        inputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(res) + "bed.csv";
+        outputPath ="/home/carlo/Development/PhD/C++/Larsen/bins/sampled" + std::to_string(res) + "bed.raw";
+        break;
+    case 2:
+        inputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(res) + "surface.csv";
+        outputPath ="/home/carlo/Development/PhD/C++/Larsen/bins/sampled" + std::to_string(res) + "surface.raw";
+        break;
+    case 3:
+        inputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(res) + "icemask.csv";
+        outputPath ="/home/carlo/Development/PhD/C++/Larsen/bins/sampled" + std::to_string(res) + "icemask.raw";
+        break;
+    }
 
-    QString inputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(res) + "surface.csv";
 
-//    std::string outputPath ="/home/carlo/Development/PhD/C++/Larsen/bins/sampled" + std::to_string(res) + ".raw";
+    //    QString inputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(res) + "rockmask.csv";
 
-//    std::string outputPath ="/home/carlo/Development/PhD/C++/Larsen/bins/sampled" + std::to_string(res) + "bed.raw";
+    //    QString inputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(res) + "lakemask.csv";
 
-    std::string outputPath ="/home/carlo/Development/PhD/C++/Larsen/bins/sampled" + std::to_string(res) + "surface.raw";
+    //    std::string outputPath ="/home/carlo/Development/PhD/C++/Larsen/bins/sampled" + std::to_string(res) + "rockmask.raw";
+
+    //    std::string outputPath ="/home/carlo/Development/PhD/C++/Larsen/bins/sampled" + std::to_string(res) + "lakemask.raw";
+
 
     QFile input(inputPath);
-    //QFile output(outputPath);
     std::ofstream output(outputPath.c_str(), std::ios::binary);
 
-    //std::vector<float> valuesList;
-
-    //| !output.open(QIODevice::WriteOnly | QIODevice::Truncate
     if(!input.open(QFile::ReadOnly | QFile::Text) | !output.is_open())
     {
         qDebug() << "File(s) do(es) not exist(s)";
@@ -149,8 +356,6 @@ void DataHandler::BinFileWithNormals(int res)
     }else
     {
         QTextStream in(&input);
-        //QDataStream out(&output);
-
 
         for (int iy = 0; iy < normMax; iy++) {
 
@@ -164,8 +369,6 @@ void DataHandler::BinFileWithNormals(int res)
                 {
                     z = z/1000;
                 }
-                //float normalZ = Normalize(min, max, normMin, normMax, z);
-                //valuesList.push_back(normalZ);
                 output.write((char*)&z, sizeof (float));
             }
         }
@@ -186,11 +389,27 @@ std::vector<std::vector<float>> DataHandler::ReadPointsFromBinary(int res)
 
     std::vector<std::vector<float>> points(res);
 
-//    std::string inputPath = "/home/carlo/Development/PhD/C++/Larsen/bins/sampled" + std::to_string(res) + ".raw";
+    std::string inputPath;
 
-    std::string inputPath = "/home/carlo/Development/PhD/C++/Larsen/bins/sampled" + std::to_string(res) + "bed.raw";
 
-//    std::string inputPath = "/home/carlo/Development/PhD/C++/Larsen/bins/sampled" + std::to_string(res) + "surface.raw";
+    switch (m_option) {
+    case 0:
+        inputPath = "/home/carlo/Development/PhD/C++/Larsen/bins/sampled" + std::to_string(res) + "iceThickness.raw";
+        break;
+    case 1:
+        inputPath = "/home/carlo/Development/PhD/C++/Larsen/bins/sampled" + std::to_string(res) + "bed.raw";
+        break;
+    case 2:
+        inputPath = "/home/carlo/Development/PhD/C++/Larsen/bins/sampled" + std::to_string(res) + "surface.raw";
+        break;
+    case 3:
+        inputPath = "/home/carlo/Development/PhD/C++/Larsen/bins/sampled" + std::to_string(res) + "icemask.raw";
+        break;
+    }
+
+    //    std::string inputPath = "/home/carlo/Development/PhD/C++/Larsen/bins/sampled" + std::to_string(res) + "rockmask.raw";
+
+    //    std::string inputPath = "/home/carlo/Development/PhD/C++/Larsen/bins/sampled" + std::to_string(res) + "lakemask.raw";
 
 
     std::ifstream input(inputPath.c_str(), std::ios::binary);
@@ -220,11 +439,26 @@ std::vector<std::vector<float>> DataHandler::ReadPointsFromBinary(int res)
 
 void DataHandler::WriteVerticesToBin(int res, std::vector<Vertex> vertices )
 {
-//    std::string outputPath = "/home/carlo/Development/PhD/C++/Larsen/vertices/vertices" + std::to_string(res) + ".bin";
+    std::string outputPath;
 
-    std::string outputPath = "/home/carlo/Development/PhD/C++/Larsen/vertices/vertices" + std::to_string(res) + "bed.bin";
+    switch (m_option) {
+    case 0:
+        outputPath = "/home/carlo/Development/PhD/C++/Larsen/vertices/vertices" + std::to_string(res) + "iceThickness.bin";
+        break;
+    case 1:
+        outputPath = "/home/carlo/Development/PhD/C++/Larsen/vertices/vertices" + std::to_string(res) + "bed.bin";
+        break;
+    case 2:
+        outputPath = "/home/carlo/Development/PhD/C++/Larsen/vertices/vertices" + std::to_string(res) + "surface.bin";
+        break;
+    case 3:
+        outputPath = "/home/carlo/Development/PhD/C++/Larsen/vertices/vertices" + std::to_string(res) + "icemask.bin";
+        break;
+    }
 
-//    std::string outputPath = "/home/carlo/Development/PhD/C++/Larsen/vertices/vertices" + std::to_string(res) + "surface.bin";
+    //     outputPath = "/home/carlo/Development/PhD/C++/Larsen/vertices/vertices" + std::to_string(res) + "rockmask.bin";
+
+    //    outputPath = "/home/carlo/Development/PhD/C++/Larsen/vertices/vertices" + std::to_string(res) + "lakemask.bin";
 
     std::ofstream output(outputPath.c_str(), std::ios::binary);
 
@@ -245,11 +479,25 @@ void DataHandler::WriteVerticesToBin(int res, std::vector<Vertex> vertices )
 
 void DataHandler::WriteIndecesToBins(int res, std::vector<int>indeces)
 {
-//    std::string outputPath = "/home/carlo/Development/PhD/C++/Larsen/indeces/indeces" + std::to_string(res) + ".bin";
+    std::string outputPath;
+    switch (m_option) {
+    case 0:
+        outputPath = "/home/carlo/Development/PhD/C++/Larsen/indeces/indeces" + std::to_string(res) + "iceThickness.bin";
+        break;
+    case 1:
+        outputPath = "/home/carlo/Development/PhD/C++/Larsen/indeces/indeces" + std::to_string(res) + "bed.bin";
+        break;
+    case 2:
+        outputPath = "/home/carlo/Development/PhD/C++/Larsen/indeces/indeces" + std::to_string(res) + "surface.bin";
+        break;
+    case 3:
+        outputPath = "/home/carlo/Development/PhD/C++/Larsen/indeces/indeces" + std::to_string(res) + "icemask.bin";
+        break;
+    }
 
-    std::string outputPath = "/home/carlo/Development/PhD/C++/Larsen/indeces/indeces" + std::to_string(res) + "bed.bin";
+    //    std::string outputPath = "/home/carlo/Development/PhD/C++/Larsen/indeces/indeces" + std::to_string(res) + "rockmask.bin";
 
-//    std::string outputPath = "/home/carlo/Development/PhD/C++/Larsen/indeces/indeces" + std::to_string(res) + "surface.bin";
+    /*    outputPath = "/home/carlo/Development/PhD/C++/Larsen/indeces/indeces" + std::to_string(res) + "lakemask.bin"*/;
 
     std::ofstream output(outputPath.c_str(), std::ios::binary);
 
@@ -275,13 +523,19 @@ std::vector<Vertex> DataHandler::ReadVerticesFromBin(int res, int option)
 
     switch (option) {
     case 0:
-       inputPath  = "/home/carlo/Development/PhD/C++/Larsen/vertices/vertices" + std::to_string(res) + ".bin";
+        inputPath  = "/home/carlo/Development/PhD/C++/Larsen/vertices/vertices" + std::to_string(res) + "iceThickness.bin";
         break;
     case 1:
-       inputPath = "/home/carlo/Development/PhD/C++/Larsen/vertices/vertices" + std::to_string(res) + "bed.bin";
+        inputPath = "/home/carlo/Development/PhD/C++/Larsen/vertices/vertices" + std::to_string(res) + "bed.bin";
         break;
     case 2:
         inputPath = "/home/carlo/Development/PhD/C++/Larsen/vertices/vertices" + std::to_string(res) + "surface.bin";
+        break;
+    case 3:
+        inputPath = "/home/carlo/Development/PhD/C++/Larsen/vertices/vertices" + std::to_string(res) + "icemask.bin";
+        break;
+    case 4:
+        inputPath = "/home/carlo/Development/PhD/C++/Larsen/vertices/vertices" + std::to_string(res) + "lakemask.bin";
         break;
     }
 
@@ -313,13 +567,19 @@ std::vector<int> DataHandler::ReadIndecesFromBins(int res, int option)
 
     switch (option) {
     case 0:
-       inputPath = "/home/carlo/Development/PhD/C++/Larsen/indeces/indeces" + std::to_string(res) + ".bin";
+        inputPath = "/home/carlo/Development/PhD/C++/Larsen/indeces/indeces" + std::to_string(res) + "iceThickness.bin";
         break;
     case 1:
-      inputPath = "/home/carlo/Development/PhD/C++/Larsen/indeces/indeces" + std::to_string(res) + "bed.bin";
+        inputPath = "/home/carlo/Development/PhD/C++/Larsen/indeces/indeces" + std::to_string(res) + "bed.bin";
         break;
     case 2:
         inputPath = "/home/carlo/Development/PhD/C++/Larsen/indeces/indeces" + std::to_string(res) + "surface.bin";
+        break;
+    case 3:
+        inputPath = "/home/carlo/Development/PhD/C++/Larsen/indeces/indeces" + std::to_string(res) + "icemask.bin";
+        break;
+    case 4:
+        inputPath = "/home/carlo/Development/PhD/C++/Larsen/indeces/indeces" + std::to_string(res) + "lakemask.bin";
         break;
     }
 
@@ -444,83 +704,37 @@ int DataHandler::factorToDimension(int factor)
     return dimension;
 }
 
-//std::vector<std::vector<float>> DataHandler::ReadPointsFromCsv(int res)
-//{
-// float size = res;
 
-// std::vector<std::vector<float>>  points(res);
+int DataHandler::recursionToDimension(int factor)
+{
+    int dimension;
+    switch (factor)
+    {
+    case 7:
+        dimension = 53;
+        break;
+    case 6:
+        dimension = 104;
+        break;
+    case 5:
+        dimension = 208;
+        break;
+    case 4:
+        dimension = 416;
+        break;
+    case 3:
+        dimension = 833;
+        break;
+    case 2:
+        dimension = 1666;
+        break;
+    case 1:
+        dimension = 3333;
+        break;
+    case 0:
+        dimension = 6667;
+        break;
+    }
 
-// QString inputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled" + QString::number(res) + ".csv";
-
-// qDebug() << inputPath;
-
-// QFile input(inputPath);
-
-// if(!input.open(QFile::ReadOnly | QFile::Text))
-// {
-//     qDebug() << "File(s) do(es) not exist(s)";
-//     Sampler(dimensionToFactor(res));
-//     ReadPointsFromCsv(res);
-// }else
-// {
-//     QTextStream in(&input);
-
-//     for (int y = 0; y < size; y++) {
-
-//         QString line = in.readLine();
-//         QStringList inColumns = line.split(",");
-
-//         for (int x = 0; x < size; x++) {
-
-//             points.at(y).push_back( inColumns.at(x).toFloat()/1000);
-
-//         }
-//     }
-
-//     input.close();
-// }
-
-// return points;
-//}
-
-//void DataHandler::FileOfPoints()
-//{
-//    QString inputPath = "/home/carlo/Development/PhD/C++/bedmap2AsciiRemovedNoDataSampled64.csv";
-//    QString outputPath = "/home/carlo/Development/PhD/C++/test64.csv";
-
-//    QFile input(inputPath);
-//    QFile output(outputPath);
-
-//    if(!input.open(QFile::ReadOnly | QFile::Text) | !output.open(QIODevice::WriteOnly | QIODevice::Truncate))
-//    {
-//        qDebug() << "File(s) do(es) not exist(s)";
-//    }else
-//    {
-//        QTextStream in(&input);
-//        QTextStream out(&output);
-
-
-//        for (int y = 0; y < 203; y++) {
-
-//            QString line = in.readLine();
-//            QStringList inColumns = line.split(",");
-
-//            for (int x = 0; x < 203; x++) {
-
-//                Constants::Vector *vec = new Constants::Vector();
-//                vec->x = x;
-//                vec->y = y;
-//                vec->z = inColumns.at(x).toFloat();
-
-
-
-//                out << vec->x << "," << vec->y << "," << vec->z << "\n";
-
-//            }
-//        }
-
-//        input.close();
-//        output.close();
-//        qDebug() << "Done";
-//    }
-//}
+    return dimension;
+}

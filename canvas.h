@@ -1,3 +1,12 @@
+/**
+ * @file camera3D.h
+ * @author Carlo Sarli
+ * @date 30 August 2019
+ * @brief This class provides Camera functionalty for  the canvas.
+ *
+ * This is the OpenGL widget implementation. It contains the canvas for the opengl code and the relevant event handler for user interactions.
+ */
+
 #ifndef CANVAS_H
 #define CANVAS_H
 
@@ -22,9 +31,20 @@ class Canvas : public QOpenGLWidget, protected QOpenGLFunctions
     Q_OBJECT
 
 public:
+    /**
+     * @brief Canvas the constructor for the canvas class
+     * @param parent the parent widget
+     */
     Canvas(QWidget *parent = nullptr);
+    /**
+      *@brief the destructor for the canvas class
+      */
     ~Canvas();
 
+    /**
+     * @brief SetDrawOption Set the option from 0 to 3 for which surface to draw
+     * @param option the option from 0 to 3 corresponding to the various surfacesAAA
+     */
     void SetDrawOption(int option);
     int GetDrawOption();
     void SetResOption(int option);
@@ -49,6 +69,18 @@ public:
 
     std::vector<int> GetSurfaceIndeces();
     void SetSurfaceIndeces(std::vector<int> triIndeces);
+
+    std::vector<Vertex> GetIcemaskVerteces();
+    void SetIcemaskVerteces(std::vector<Vertex> triVerteces);
+
+    std::vector<int> GetIcemaskIndeces();
+    void SetIcemaskIndeces(std::vector<int> triIndeces);
+
+    std::vector<Vertex> GetRockmaskVerteces();
+    void SetRockmaskVerteces(std::vector<Vertex> triVerteces);
+
+    std::vector<int> GetRockmaskIndeces();
+    void SetRockmaskIndeces(std::vector<int> triIndeces);
 
     QColor GetBgColour() ;
     void SetBgColour(QColor bgColour);
@@ -77,6 +109,15 @@ public:
     bool GetSurfaceSurfaceToggled() const;
     void SetSurfaceSurfaceToggled(bool surfaceSurfaceToggled);
 
+    bool GetIcemaskSurfaceToggled() const;
+    void SetIcemaskSurfaceToggled(bool icemaskSurfaceToggled);
+
+    bool GetRockmaskSurfaceToggled() const;
+    void SetRockmaskSurfaceToggled(bool icemaskSurfaceToggled);
+
+    int GetSamplingOption();
+    void SetSamplingOption(int option);
+
 protected:
     virtual void initializeGL();
     virtual void resizeGL(int w, int h);
@@ -96,6 +137,11 @@ private:
     std::vector<int> m_bedIndeces;
     std::vector<Vertex> m_surfaceVerteces;
     std::vector<int> m_surfaceIndeces;
+    std::vector<Vertex> m_icemaskVerteces;
+    std::vector<int> m_icemaskIndeces;
+    std::vector<Vertex> m_rockmaskVerteces;
+    std::vector<int> m_rockmaskIndeces;
+    int m_samplingOption;
 
     QOpenGLBuffer m_iceVertex;
     QOpenGLBuffer *m_iceIndex = new QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
@@ -103,10 +149,16 @@ private:
     QOpenGLBuffer *m_bedIndex = new QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
     QOpenGLBuffer m_surfaceVertex;
     QOpenGLBuffer *m_surfaceIndex = new QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
+    QOpenGLBuffer m_icemaskVertex;
+    QOpenGLBuffer *m_icemaskIndex = new QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
+    QOpenGLBuffer m_rockmaskVertex;
+    QOpenGLBuffer *m_rockmaskIndex = new QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
 
     QOpenGLVertexArrayObject m_iceVAO;
     QOpenGLVertexArrayObject m_bedVAO;
     QOpenGLVertexArrayObject m_surfaceVAO;
+    QOpenGLVertexArrayObject m_icemaskVAO;
+    QOpenGLVertexArrayObject m_rockmaskVAO;
 
     QOpenGLShaderProgram *m_program;
 
@@ -134,9 +186,14 @@ private:
     int m_zFactorOption;
     int m_zOffsetOption;
     int m_progressValue;
+    int m_iceThicknessMapSelection;
+    int m_bedMapSelection;
+
     bool m_iceSurfaceToggled;
     bool m_bedSurfaceToggled;
     bool m_surfaceSurfaceToggled;
+    bool m_icemaskSurfaceToggled;
+    bool m_rockmaskSurfaceToggled;
 
     QString m_progressStatus;
 
@@ -154,12 +211,23 @@ private:
 
 
     void wheelEvent(QWheelEvent *event);
+
+    void resetRotation();
+    void resetTransform();
+    void resetZoom();
+    void resetScale();
+    void resetTranslation();
+
 signals:
     void Si_SetProgressBarValue(int value);
     void Si_SetProgressBarLabel(QString label);
     void Si_SetIceTrianglesLabel(QString label);
     void Si_SetBedTrianglesLabel(QString label);
     void Si_SetSurfaceTrianglesLabel(QString label);
+    void Si_SetIcemaskTrianglesLabel(QString label);
+    void Si_SetRockmaskTrianglesLabel(QString label);
+    void Si_SetZFactorOption(int z);
+    void Si_SetZOffsetOption(int z);
 
 protected slots:
     void update();
@@ -173,7 +241,17 @@ public slots:
     void S_GetIceSurfaceToggle(bool toggle);
     void S_GetBedSurfaceToggle(bool toggle);
     void S_GetSurfaceSurfaceToggle(bool toggle);
+    void S_GetIcemaskSurfaceToggle(bool toggle);
+    void S_GetRockmaskSurfaceToggle(bool toggle);
     void S_GetZOffsetOption(int option);
+    void S_GetMenuResetRotAction();
+    void S_GetMenuResetZoomAction();
+    void S_GetMenuResetScaleAction();
+    void S_GetMenuResetTranAction();
+    void S_GetMenuResetTransformAction();
+    void S_GetSamplingOption();
+    void S_GetIceThicknessMap(int map);
+    void S_GetBedMap(int map);
 };
 
 #endif // CANVAS_H

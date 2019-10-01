@@ -1,3 +1,12 @@
+/**
+ * @file camera3D.h
+ * @author Trent Reed, Carlo Sarli
+ * @date 30 August 2019
+ * @brief This class provides Camera functionalty for  the canvas.
+ *
+ * Detailed description goes here.
+ */
+
 #ifndef VERTEX_H
 #define VERTEX_H
 

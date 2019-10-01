@@ -1,3 +1,12 @@
+/**
+ * @file camera3D.h
+ * @author Carlo Sarli
+ * @date 30 August 2019
+ * @brief This class provides Camera functionalty for  the canvas.
+ *
+ * Detailed description goes here.
+ */
+
 #ifndef GEOMETRYPROCESSOR_H
 #define GEOMETRYPROCESSOR_H
 
@@ -47,7 +56,7 @@ public:
     QList<QVector3D> GetVertList();
     void SetVertList(QList<QVector3D> vertList);
 
-    void CreateTriangles(int dimension);
+    void CreateTriangles(int dimension, int option);
 
 private:
     std::vector<std::vector<float>> m_points;

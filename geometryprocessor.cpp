@@ -14,8 +14,10 @@ GeometryProcessor::~GeometryProcessor()
     delete o_data;
 }
 
-void GeometryProcessor::CreateTriangles(int dimension)
+void GeometryProcessor::CreateTriangles(int dimension, int option)
 {
+    o_data->SetOption(option);
+
     QList<QVector3D> vertList;
     std::vector<int> triIndeces;
 
@@ -216,143 +218,6 @@ void GeometryProcessor::readPoints(int dimension)
     qDebug() << "The readPoints func took" << timer.elapsed() << "milliseconds";
 }
 
-
-///////OLD///////
-
-//void GeometryProcessor::SetUpVertices()
-//{
-//    QElapsedTimer timer;
-//    timer.start();
-
-//    //std::vector<Vertex> triVertices;
-//    QList<QVector3D> vertList;
-//    std::vector<int> triIndeces;
-//    int index = 0;
-
-//    for(auto tri: GetTriangles())
-//    {
-//        //get all vertices of the triangles and add them to both the vertices array and a
-//        QVector3D A = tri.GetVertexA().position();
-//        QVector3D B = tri.GetVertexB().position();
-//        QVector3D C = tri.GetVertexC().position();
-
-//        if(!vertList.contains(A))
-//        {
-//            vertList.append(A);
-
-//        }
-//        if(!vertList.contains(B))
-//        {
-//            vertList.append(B);
-
-//        }
-//        if(!vertList.contains(C))
-//        {
-//            vertList.append(C);
-//        }
-//        triIndeces.push_back(vertList.indexOf(A));
-//        triIndeces.push_back(vertList.indexOf(B));
-//        triIndeces.push_back(vertList.indexOf(C));
-//    }
-//    SetVertList(vertList);
-//    SetTriIndeces(triIndeces);
-
-//    qDebug() << "The SetUpVerticesfunc took" << timer.elapsed() << "milliseconds";
-//}
-
-//void GeometryProcessor::GenerateQuads(int dimension)
-//{
-//    QElapsedTimer timer;
-//    timer.start();
-
-//    std::vector<Quad> quads;
-//    Quad o_quad;
-//    readPoints(dimension);
-//    for(int y = 0; y < dimension-1; ++y)
-//    {
-//        for(int x = 0; x < dimension-1; ++x)
-//        {
-//            o_quad = readQuad(x, y, GetPoints());
-//            quads.push_back(o_quad);
-//        }
-//    }
-//    SetQuads(quads);
-
-//    qDebug() << "The GenerateQuads func took" << timer.elapsed() << "milliseconds";
-//}
-
-//void GeometryProcessor::GenerateTriangles()
-//{
-//    QElapsedTimer timer;
-//    timer.start();
-
-//    std::vector<Triangle> triangles;
-
-//    for (auto quad : GetQuads())
-//    {
-//        int quadType = quad.LookUpTable();
-//        readTriangle(quad, quadType, triangles);
-//    }
-
-//    SetTriangles(triangles);
-
-//    qDebug() << "The GenerateTriangles func took" << timer.elapsed() << "milliseconds";
-
-//}
-
-//Vertex GeometryProcessor::generateVertexFromCoord(float x, float y, float z)
-//{
-
-
-//    QVector3D *tmp = new QVector3D(x,y,z);
-
-
-
-//    return Vertex(*tmp);
-//}
-
-//Quad GeometryProcessor::readQuad(float x, float y, std::vector<std::vector<float>> points)
-//{
-
-
-//    Vertex A = generateVertexFromCoord(x, y, points[x][y]);
-//    Vertex B = generateVertexFromCoord(x+1, y, points[x+1][y]);
-//    Vertex C = generateVertexFromCoord(x, y+1, points[x][y+1]);
-//    Vertex D = generateVertexFromCoord(x+1, y+1, points[x+1][y+1]);
-
-
-
-//    return Quad(A, B, C, D);
-//}
-
-//void GeometryProcessor::readTriangle(Quad q, int type, std::vector<Triangle> &triangles)
-//{
-
-
-//    switch (type) {
-//    case 0:
-//        triangles.push_back(Triangle(q.GetVertexA(), q.GetVertexD(), q.GetVertexC()));
-//        triangles.push_back(Triangle(q.GetVertexA(), q.GetVertexD(), q.GetVertexB()));
-//        break;
-//    case 1:
-//        triangles.push_back(Triangle(q.GetVertexB(), q.GetVertexC(), q.GetVertexD()));
-//        break;
-//    case 2:
-//        triangles.push_back(Triangle(q.GetVertexA(), q.GetVertexC(), q.GetVertexD()));
-//        break;
-//    case 3:
-//        triangles.push_back(Triangle(q.GetVertexA(), q.GetVertexB(), q.GetVertexD()));
-//        break;
-//    case 4:
-//        triangles.push_back(Triangle(q.GetVertexA(), q.GetVertexB(), q.GetVertexC()));
-//        break;
-//    case 10:
-//        //no triangle
-//        break;
-//    }
-
-
-//}
 
 
 //////////////////ACCESSORS////////////////

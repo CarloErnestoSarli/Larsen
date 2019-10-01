@@ -1,3 +1,12 @@
+/**
+ * @file camera3D.h
+ * @author Carlo Sarli
+ * @date 30 August 2019
+ * @brief This class provides Camera functionalty for  the canvas.
+ *
+ * Detailed description goes here.
+ */
+
 #ifndef COLOURMAP_H
 #define COLOURMAP_H
 
