@@ -142,6 +142,10 @@ private:
     std::vector<Vertex> m_rockmaskVerteces;
     std::vector<int> m_rockmaskIndeces;
     int m_samplingOption;
+    int m_lightingSelection;
+
+    QVector3D m_lightColour;
+    QVector3D m_lightPosition;
 
     QOpenGLBuffer m_iceVertex;
     QOpenGLBuffer *m_iceIndex = new QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
@@ -252,6 +256,11 @@ public slots:
     void S_GetSamplingOption();
     void S_GetIceThicknessMap(int map);
     void S_GetBedMap(int map);
+    void S_GetLightingSelection(int sel);
+    void S_GetLightingColourRed(int red);
+    void S_GetLightingColourGreen(int green);
+    void S_GetLightingColourBlue(int blue);
+
 };
 
 #endif // CANVAS_H

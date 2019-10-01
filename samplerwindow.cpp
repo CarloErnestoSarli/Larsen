@@ -79,7 +79,7 @@ void SamplerWindow::createSurfaces(int samplingOption, int datasetOption)
 
         o_setUp->CreateTriangles(i, datasetOption);
 
-        QList<QVector3D> list = o_setUp->GetVertList();
+        QList<Vertex> list = o_setUp->GetVertList();
         for(auto l : list)
         {
             triVerteces.push_back(Vertex(l/*, *col*/));

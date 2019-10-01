@@ -1,20 +1,25 @@
 #version 450
 layout(location = 0) in vec3 position;
-layout(location = 1) in vec3 color;
+layout(location = 1) in vec3 normal;
 
 out vec3 vNormal;
 out vec4 vColor;
+out vec3 vPos;
+out vec3 lightPos;
+out vec3 lightColour;
 
 uniform mat4 modelToWorld;
 uniform mat4 worldToCamera;
 uniform mat4 cameraToView;
+
+uniform vec3 lightlPositionValue;
+uniform vec3 lightColourValue;
 
 uniform int pointSize;
 uniform int zFactorValue;
 uniform int zOffsetValue;
 uniform int iceThicknessMapSelValue;
 uniform int bedMapSelValue;
-
 uniform int surfaceValue;
 
 vec3 ice_colour_map1[9] = vec3[9] (
@@ -89,16 +94,36 @@ vec3 bed_colour_map3[9] = vec3[9] (
     vec3(0, 0.266, 0.105)
 );
 
+vec3 surface_colour_map[9] = vec3[9] (
+    vec3(0.968, 0.988, 0.992),
+    vec3(0.898, 0.960, 0.976),
+    vec3(0.8, 0.925, 0.901),
+    vec3(0.6, 0.847, 0.788),
+    vec3(0.4, 0.760, 0.643),
+    vec3(0.254, 0.682, 0.462),
+    vec3(0.137, 0.545, 0.270),
+    vec3(0, 0.427, 0.172),
+    vec3(0, 0.266, 0.105)
+);
+
 void main()
 {
-    float normal = (9 - 0) * (position.z - 0) / (4.621 - 0) + 0;
-    int index = int(normal);
+    float norm= (9 - 0) * (position.z - 0) / (4.621 - 0) + 0;
+    int index = int(norm);
     vec3 colour;
     vec3 ice_colour_map[9];
     vec3 bed_colour_map[9];
 
     gl_PointSize = pointSize;
     gl_Position = cameraToView * worldToCamera * modelToWorld * vec4(position *vec3(1,1,zFactorValue) + vec3(0,0,zOffsetValue), 1.0);
+
+    vPos = vec3(modelToWorld * vec4(position, 1.0));
+
+    lightPos = lightlPositionValue;
+
+    lightColour = lightColourValue;
+
+    vNormal = mat3(transpose(inverse(modelToWorld))) * normal;
 
     switch(iceThicknessMapSelValue)
     {
@@ -141,7 +166,8 @@ void main()
         vColor = vec4(colour, 1);
         break;
     case 2:
-        vColor = vec4(color, 1.0);
+        colour  = surface_colour_map[index];
+        vColor = vec4(colour, 1.0);
         break;
     case 3:
         vColor = vec4(vec3(1,1,1), 1.0);

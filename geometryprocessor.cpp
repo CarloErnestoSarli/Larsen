@@ -18,7 +18,7 @@ void GeometryProcessor::CreateTriangles(int dimension, int option)
 {
     o_data->SetOption(option);
 
-    QList<QVector3D> vertList;
+    QList<Vertex> vertList;
     std::vector<int> triIndeces;
 
     readPoints(dimension);
@@ -46,15 +46,15 @@ void GeometryProcessor::CreateTriangles(int dimension, int option)
     SetTriIndeces(triIndeces);
 }
 
-bool GeometryProcessor::listContainsReverse(QList<QVector3D> &vertList, QVector3D vert)
-{
-    QListIterator<QVector3D>i(vertList);
+bool GeometryProcessor::listContainsReverse(QList<Vertex> &vertList, Vertex vert)
+{  
+    QListIterator<Vertex>i(vertList);
     i.toBack();
     int movingAway = 0;
     float previousDistance = 0;
     while (i.hasPrevious() && movingAway <= 6)
     {
-        float currentDistance =i.previous().distanceToPoint(vert);
+        float currentDistance =i.previous().position().distanceToPoint(vert.position());
 
         if(currentDistance == 0)
         {
@@ -75,15 +75,15 @@ bool GeometryProcessor::listContainsReverse(QList<QVector3D> &vertList, QVector3
     return false;
 }
 
-int GeometryProcessor::listIndexReverse(QList<QVector3D> &vertList, QVector3D vert)
+int GeometryProcessor::listIndexReverse(QList<Vertex> &vertList, Vertex vert)
 {
-    QListIterator<QVector3D>i(vertList);
+    QListIterator<Vertex>i(vertList);
     i.toBack();
     int index =  vertList.length();
 
     while (i.hasPrevious())
     {
-        if(i.previous() == vert){
+        if(i.previous().position() == vert.position()){
             return index-1;
         }
         index--;
@@ -92,12 +92,12 @@ int GeometryProcessor::listIndexReverse(QList<QVector3D> &vertList, QVector3D ve
 
 void GeometryProcessor::generateIndecesVerteces(QVector3D &A, QVector3D &B, QVector3D &C )
 {
-    QList<QVector3D> vertList = GetVertList();
+    QList<Vertex> vertList = GetVertList();
     std::vector<int> triIndeces = GetTriIndeces();
 
 }
 
-void GeometryProcessor::readNextTwo(QVector3D &A, QVector3D &B, std::vector<std::vector<float>> &points, QList<QVector3D> &vertList, std::vector<int> &triIndeces, int c )
+void GeometryProcessor::readNextTwo(QVector3D &A, QVector3D &B, std::vector<std::vector<float>> &points, QList<Vertex> &vertList, std::vector<int> &triIndeces, int c )
 {
     float x = A.x();
     float y = A.y();
@@ -115,39 +115,70 @@ void GeometryProcessor::readNextTwo(QVector3D &A, QVector3D &B, std::vector<std:
 
 }
 
-void GeometryProcessor::populateArrays(QVector3D &A, QVector3D &B, QVector3D &C, QVector3D &D, QList<QVector3D> &vertList, std::vector<int> &triIndeces )
+void GeometryProcessor::populateArrays(QVector3D &a, QVector3D &b, QVector3D &c, QVector3D &d, QList<Vertex> &vertList, std::vector<int> &triIndeces )
 {
-    float aZ = A.z();
-    float bZ = B.z();
-    float cZ = C.z();
-    float dZ = D.z();
+    float aZ = a.z();
+    float bZ = b.z();
+    float cZ = c.z();
+    float dZ = d.z();
 
     int triType = checkForTriangles(aZ, bZ, cZ, dZ);
+
+    QVector3D normal;
+    Vertex A;
+    Vertex B;
+    Vertex C;
+    Vertex D;
 
     switch (triType) {
     case 0:
         //no triangle
         break;
     case 1:
+
         //adc
+        normal = QVector3D::crossProduct(d-a, c-d).normalized();
+        A = Vertex (a, normal);
+        D = Vertex (d, normal);
+        C = Vertex (c, normal);
         addVerticesandIndeces(A, D, C, vertList, triIndeces);
          //adb
+        normal = QVector3D::crossProduct(d-a, b-d).normalized();
+        A = Vertex (a, normal);
+        D = Vertex (d, normal);
+        B = Vertex (b, normal);
         addVerticesandIndeces(A, D, B, vertList, triIndeces);
         break;
     case 2:
         //bcd
+        normal = QVector3D::crossProduct(c-b, d-c).normalized();
+        B = Vertex (b, normal);
+        C = Vertex (c, normal);
+        D = Vertex (d, normal);
         addVerticesandIndeces(B, C, D, vertList, triIndeces);
         break;
     case 3:
         //acd
+        normal = QVector3D::crossProduct(c-a, d-c).normalized();
+        A = Vertex (a, normal);
+        C = Vertex (c, normal);
+        D = Vertex (d, normal);
         addVerticesandIndeces(A, C, D, vertList, triIndeces);
         break;
     case 4:
         //abd
+        normal = QVector3D::crossProduct(b-a, d-b).normalized();
+        A = Vertex (a, normal);
+        B = Vertex (b, normal);
+        D = Vertex (d, normal);
         addVerticesandIndeces(A, B, D, vertList, triIndeces);
         break;
     case 5:
         //abc
+        normal = QVector3D::crossProduct(b-a, c-b).normalized();
+        A = Vertex (a, normal);
+        B = Vertex (b, normal);
+        C = Vertex (c, normal);
         addVerticesandIndeces(A, B, C, vertList, triIndeces);
         break;
     }
@@ -181,7 +212,7 @@ int GeometryProcessor::checkForTriangles(float &aZ, float &bZ, float &cZ, float 
     }
 }
 
-void GeometryProcessor::addVerticesandIndeces(QVector3D &A, QVector3D &B, QVector3D &C, QList<QVector3D> &vertList, std::vector<int> &triIndeces)
+void GeometryProcessor::addVerticesandIndeces(Vertex &A, Vertex &B, Vertex &C, QList<Vertex> &vertList, std::vector<int> &triIndeces)
 {
     if(listContainsReverse(vertList, A))
     {
@@ -274,22 +305,22 @@ void GeometryProcessor::SetQuads(std::vector<Quad> quads)
 }
 
 
-QSet<QVector3D> GeometryProcessor::GetVertSet()
+QSet<Vertex> GeometryProcessor::GetVertSet()
 {
     return m_vertSet;
 }
 
-void GeometryProcessor::SetVertSet(QSet<QVector3D> vertSet)
+void GeometryProcessor::SetVertSet(QSet<Vertex> vertSet)
 {
     m_vertSet = vertSet;
 }
 
-QList<QVector3D> GeometryProcessor::GetVertList()
+QList<Vertex> GeometryProcessor::GetVertList()
 {
     return m_vertList;
 }
 
-void GeometryProcessor::SetVertList(QList<QVector3D> vertList)
+void GeometryProcessor::SetVertList(QList<Vertex> vertList)
 {
     m_vertList = vertList;
 }

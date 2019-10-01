@@ -39,6 +39,10 @@ Canvas::Canvas(QWidget *parent) : QOpenGLWidget(parent)
     m_samplingOption = 0;
     m_iceThicknessMapSelection = 0;
     m_bedMapSelection = 0;
+    m_lightingSelection = 0;
+
+    m_lightPosition = QVector3D(1.2f, 1.0f, 2.0f);
+    m_lightColour = QVector3D(1.0f, 1.0f, 1.0f);
 
     setUp = new GeometryProcessor();
     SetBgColour(Qt::gray);
@@ -105,7 +109,7 @@ void Canvas::initializeGL()
         m_program->setAttributeBuffer(0, GL_FLOAT, Vertex::positionOffset(), Vertex::PositionTupleSize, Vertex::stride());
 
         m_program->enableAttributeArray(1);
-        m_program->setAttributeBuffer(1, GL_FLOAT, Vertex::colorOffset(), Vertex::ColorTupleSize, Vertex::stride());
+        m_program->setAttributeBuffer(1, GL_FLOAT, Vertex::normalOffset(), Vertex::NormalTupleSize, Vertex::stride());
 
         m_program->enableAttributeArray(2);
         m_program->setAttributeBuffer(2, GL_INT, 0, 3, sizeof(int));
@@ -136,7 +140,7 @@ void Canvas::initializeGL()
         m_program->setAttributeBuffer(0, GL_FLOAT, Vertex::positionOffset(), Vertex::PositionTupleSize, Vertex::stride());
 
         m_program->enableAttributeArray(1);
-        m_program->setAttributeBuffer(1, GL_FLOAT, Vertex::colorOffset(), Vertex::ColorTupleSize, Vertex::stride());
+        m_program->setAttributeBuffer(1, GL_FLOAT, Vertex::normalOffset(), Vertex::NormalTupleSize, Vertex::stride());
 
         m_program->enableAttributeArray(2);
         m_program->setAttributeBuffer(2, GL_INT, 0, 3, sizeof(int));
@@ -163,7 +167,7 @@ void Canvas::initializeGL()
         m_program->setAttributeBuffer(0, GL_FLOAT, Vertex::positionOffset(), Vertex::PositionTupleSize, Vertex::stride());
 
         m_program->enableAttributeArray(1);
-        m_program->setAttributeBuffer(1, GL_FLOAT, Vertex::colorOffset(), Vertex::ColorTupleSize, Vertex::stride());
+        m_program->setAttributeBuffer(1, GL_FLOAT, Vertex::normalOffset(), Vertex::NormalTupleSize, Vertex::stride());
 
         m_program->enableAttributeArray(2);
         m_program->setAttributeBuffer(2, GL_INT, 0, 3, sizeof(int));
@@ -190,7 +194,7 @@ void Canvas::initializeGL()
         m_program->setAttributeBuffer(0, GL_FLOAT, Vertex::positionOffset(), Vertex::PositionTupleSize, Vertex::stride());
 
         m_program->enableAttributeArray(1);
-        m_program->setAttributeBuffer(1, GL_FLOAT, Vertex::colorOffset(), Vertex::ColorTupleSize, Vertex::stride());
+        m_program->setAttributeBuffer(1, GL_FLOAT, Vertex::normalOffset(), Vertex::NormalTupleSize, Vertex::stride());
 
         m_program->enableAttributeArray(2);
         m_program->setAttributeBuffer(2, GL_INT, 0, 3, sizeof(int));
@@ -217,7 +221,7 @@ void Canvas::initializeGL()
         m_program->setAttributeBuffer(0, GL_FLOAT, Vertex::positionOffset(), Vertex::PositionTupleSize, Vertex::stride());
 
         m_program->enableAttributeArray(1);
-        m_program->setAttributeBuffer(1, GL_FLOAT, Vertex::colorOffset(), Vertex::ColorTupleSize, Vertex::stride());
+        m_program->setAttributeBuffer(1, GL_FLOAT, Vertex::normalOffset(), Vertex::NormalTupleSize, Vertex::stride());
 
         m_program->enableAttributeArray(2);
         m_program->setAttributeBuffer(2, GL_INT, 0, 3, sizeof(int));
@@ -404,6 +408,12 @@ void Canvas::update()
         resetScale();
         resetTranslation();
     }
+//todo
+    if(UserInput::keyPressed(Qt::Key_PageUp))
+    {
+        m_lightPosition.setX(UserInput::mouseDelta().x());
+        m_lightPosition.setY(UserInput::mouseDelta().y());
+    }
 
     // Schedule a redraw
     QOpenGLWidget::update();
@@ -503,7 +513,6 @@ void Canvas::initializeVertices()
 
 }
 
-
 void Canvas::loadBuffers()
 {
     std::vector<Vertex> iceVerteces = GetIceVerteces();
@@ -579,6 +588,16 @@ void Canvas::drawFigure(int option)
     GLint bedMapSel = m_bedMapSelection;
     int bedMapSelValue = m_program->uniformLocation("bedMapSelValue");
     m_program->setUniformValue(bedMapSelValue, bedMapSel);
+
+    int lightPositionValue = m_program->uniformLocation("lightPositionValue");
+    m_program->setUniformValue(lightPositionValue, m_lightPosition.x(), m_lightPosition.y(), m_lightPosition.z());
+
+    int lightColourValue = m_program->uniformLocation("lightColourValue");
+    m_program->setUniformValue(lightColourValue, m_lightColour.x(), m_lightColour.y(), m_lightColour.z());
+
+    GLint lightingSel = m_lightingSelection;
+    int lightingSelValue = m_program->uniformLocation("lightingSelValue");
+    m_program->setUniformValue(lightingSelValue, lightingSel);
 
     GLint zOffset = 1;
 
@@ -943,6 +962,23 @@ void Canvas::S_GetIceThicknessMap(int map)
 void Canvas::S_GetBedMap(int map)
 {
     m_bedMapSelection = map;
+}
+
+void Canvas::S_GetLightingSelection(int sel)
+{
+    m_lightingSelection = sel;
+}
+void Canvas::S_GetLightingColourRed(int red)
+{
+    m_lightColour.setX(red/10);
+}
+void Canvas::S_GetLightingColourGreen(int green)
+{
+    m_lightColour.setY(green/10);
+}
+void Canvas::S_GetLightingColourBlue(int blue)
+{
+    m_lightColour.setZ(blue/10);
 }
 
 //FILTHY DUPLICATE FUNCTION FROM DATA HANDLER

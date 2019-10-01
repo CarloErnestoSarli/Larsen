@@ -27,35 +27,94 @@
        </sizepolicy>
       </property>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="13" column="0">
-        <widget class="QCheckBox" name="cb_iceSurfaceToggle">
+       <item row="26" column="0">
+        <widget class="QComboBox" name="c_resAvgCombo">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <item>
+          <property name="text">
+           <string>52x52</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>104x104</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>208x208    </string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>416x416  </string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>833x833</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>1666x1666 </string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>3333x3333</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="11" column="0">
+        <widget class="QLabel" name="l_zOffset">
          <property name="text">
-          <string>Ice</string>
+          <string>Z Translation</string>
          </property>
         </widget>
        </item>
-       <item row="14" column="0">
-        <widget class="QLabel" name="l_trianglesIce">
+       <item row="20" column="0">
+        <widget class="QLabel" name="l_trianglesIcemask">
          <property name="font">
           <font>
            <pointsize>8</pointsize>
           </font>
          </property>
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Triangles Rendered:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>Triangles Rendered:</string>
          </property>
         </widget>
        </item>
-       <item row="12" column="0">
-        <widget class="QSlider" name="s_zOffsetSlider">
-         <property name="minimum">
-          <number>-100</number>
-         </property>
+       <item row="22" column="0">
+        <widget class="QSlider" name="lightRedSlider">
          <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="value">
           <number>100</number>
          </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="17" column="0">
+        <widget class="QCheckBox" name="cb_surfaceSurfaceToggle">
+         <property name="text">
+          <string>Surface</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QRadioButton" name="rb_subSample">
+         <property name="text">
+          <string>Sub Sampling</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -68,27 +127,6 @@
          </property>
          <property name="text">
           <string>Triangles Rendered:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="19" column="0">
-        <widget class="QCheckBox" name="cb_icemaskSurfaceToggle">
-         <property name="text">
-          <string>Icemask</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="l_pointSize">
-         <property name="text">
-          <string>Point Size</string>
-         </property>
-        </widget>
-       </item>
-       <item row="17" column="0">
-        <widget class="QCheckBox" name="cb_surfaceSurfaceToggle">
-         <property name="text">
-          <string>Surface</string>
          </property>
         </widget>
        </item>
@@ -108,117 +146,27 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0">
-        <widget class="QComboBox" name="c_drawCombo">
-         <property name="editable">
-          <bool>false</bool>
-         </property>
-         <property name="currentIndex">
-          <number>0</number>
-         </property>
-         <property name="maxVisibleItems">
-          <number>3</number>
-         </property>
-         <item>
-          <property name="text">
-           <string>Points</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Triangles</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Strip</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="l_bgOption">
-         <property name="text">
-          <string>Background Colour</string>
-         </property>
-        </widget>
-       </item>
-       <item row="21" column="0">
-        <widget class="QCheckBox" name="cb_rockmaskSurfaceTogglex">
-         <property name="text">
-          <string>Rockmask</string>
-         </property>
-        </widget>
-       </item>
-       <item row="22" column="0">
-        <widget class="QLabel" name="l_triangleRockmask">
-         <property name="font">
-          <font>
-           <pointsize>8</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Triangles Rendered:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="18" column="0">
-        <widget class="QLabel" name="l_trianglesSurface">
-         <property name="font">
-          <font>
-           <pointsize>8</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Triangles Rendered:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="26" column="0">
-        <widget class="QLabel" name="l_progressStatus">
-         <property name="text">
-          <string>Running...</string>
-         </property>
-        </widget>
-       </item>
-       <item row="15" column="0">
-        <widget class="QCheckBox" name="cb_bedSurfaceToggle">
-         <property name="text">
-          <string>Bed</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0">
-        <widget class="QLabel" name="l_zFactor">
-         <property name="text">
-          <string>Z Scale</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QRadioButton" name="rb_averageSample">
-         <property name="text">
-          <string>Average Sampling</string>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="0">
-        <widget class="QSlider" name="s_zFactorSlider">
+       <item row="12" column="0">
+        <widget class="QSlider" name="s_zOffsetSlider">
          <property name="minimum">
-          <number>-10</number>
+          <number>-100</number>
          </property>
          <property name="maximum">
-          <number>10</number>
-         </property>
-         <property name="singleStep">
-          <number>1</number>
+          <number>100</number>
          </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
-       <item row="25" column="0">
+       <item row="6" column="0">
+        <widget class="QLabel" name="l_pointSize">
+         <property name="text">
+          <string>Point Size</string>
+         </property>
+        </widget>
+       </item>
+       <item row="27" column="0">
         <widget class="QComboBox" name="c_resSubCombo">
          <item>
           <property name="text">
@@ -267,22 +215,29 @@
          </item>
         </widget>
        </item>
-       <item row="27" column="0">
+       <item row="29" column="0">
         <widget class="QProgressBar" name="m_progressBar">
          <property name="value">
           <number>100</number>
          </property>
         </widget>
        </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="l_drawOption">
+       <item row="2" column="0">
+        <widget class="QLabel" name="l_bgOption">
          <property name="text">
-          <string>Draw Option</string>
+          <string>Background Colour</string>
          </property>
         </widget>
        </item>
-       <item row="20" column="0">
-        <widget class="QLabel" name="l_trianglesIcemask">
+       <item row="28" column="0">
+        <widget class="QLabel" name="l_progressStatus">
+         <property name="text">
+          <string>Running...</string>
+         </property>
+        </widget>
+       </item>
+       <item row="18" column="0">
+        <widget class="QLabel" name="l_trianglesSurface">
          <property name="font">
           <font>
            <pointsize>8</pointsize>
@@ -293,13 +248,59 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
-        <widget class="QRadioButton" name="rb_subSample">
+       <item row="25" column="0">
+        <widget class="QLabel" name="l_resolutionOption">
          <property name="text">
-          <string>Sub Sampling</string>
+          <string>Resolution Option</string>
          </property>
-         <property name="checked">
-          <bool>true</bool>
+        </widget>
+       </item>
+       <item row="21" column="0">
+        <widget class="QLabel" name="l_lightColour">
+         <property name="text">
+          <string>Light Colour</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QComboBox" name="c_drawCombo">
+         <property name="editable">
+          <bool>false</bool>
+         </property>
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <property name="maxVisibleItems">
+          <number>3</number>
+         </property>
+         <item>
+          <property name="text">
+           <string>Points</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Triangles</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Strip</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="l_drawOption">
+         <property name="text">
+          <string>Draw Option</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <widget class="QLabel" name="l_zFactor">
+         <property name="text">
+          <string>Z Scale</string>
          </property>
         </widget>
        </item>
@@ -335,60 +336,86 @@
          </item>
         </widget>
        </item>
-       <item row="11" column="0">
-        <widget class="QLabel" name="l_zOffset">
+       <item row="14" column="0">
+        <widget class="QLabel" name="l_trianglesIce">
+         <property name="font">
+          <font>
+           <pointsize>8</pointsize>
+          </font>
+         </property>
          <property name="text">
-          <string>Z Translation</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Triangles Rendered:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="0">
+        <widget class="QSlider" name="s_zFactorSlider">
+         <property name="minimum">
+          <number>-10</number>
+         </property>
+         <property name="maximum">
+          <number>10</number>
+         </property>
+         <property name="singleStep">
+          <number>1</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="13" column="0">
+        <widget class="QCheckBox" name="cb_iceSurfaceToggle">
+         <property name="text">
+          <string>Ice</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QRadioButton" name="rb_averageSample">
+         <property name="text">
+          <string>Average Sampling</string>
+         </property>
+        </widget>
+       </item>
+       <item row="19" column="0">
+        <widget class="QCheckBox" name="cb_icemaskSurfaceToggle">
+         <property name="text">
+          <string>Icemask</string>
+         </property>
+        </widget>
+       </item>
+       <item row="15" column="0">
+        <widget class="QCheckBox" name="cb_bedSurfaceToggle">
+         <property name="text">
+          <string>Bed</string>
          </property>
         </widget>
        </item>
        <item row="23" column="0">
-        <widget class="QLabel" name="l_resolutionOption">
-         <property name="text">
-          <string>Resolution Option</string>
+        <widget class="QSlider" name="lightGreenSlider">
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="value">
+          <number>100</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
        <item row="24" column="0">
-        <widget class="QComboBox" name="c_resAvgCombo">
-         <property name="enabled">
-          <bool>true</bool>
+        <widget class="QSlider" name="lightBlueSlider">
+         <property name="maximum">
+          <number>100</number>
          </property>
-         <item>
-          <property name="text">
-           <string>52x52</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>104x104</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>208x208    </string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>416x416  </string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>833x833</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>1666x1666 </string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>3333x3333</string>
-          </property>
-         </item>
+         <property name="value">
+          <number>100</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
         </widget>
        </item>
       </layout>
@@ -441,10 +468,18 @@
     </property>
     <addaction name="actionOpen_Colour_Map_Selector"/>
    </widget>
+   <widget class="QMenu" name="menuLighting">
+    <property name="title">
+     <string>Lighting</string>
+    </property>
+    <addaction name="actionAmbient"/>
+    <addaction name="actionDiffuse"/>
+   </widget>
    <addaction name="menuLarsen"/>
    <addaction name="menuReset"/>
    <addaction name="menuSampler"/>
    <addaction name="menuColour_Map"/>
+   <addaction name="menuLighting"/>
   </widget>
   <action name="actionReset_Rotation">
    <property name="text">
@@ -486,6 +521,16 @@
     <string>Open Colour Map Selector</string>
    </property>
   </action>
+  <action name="actionAmbient">
+   <property name="text">
+    <string>Ambient</string>
+   </property>
+  </action>
+  <action name="actionDiffuse">
+   <property name="text">
+    <string>Diffuse</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -521,6 +566,9 @@
     <slot>S_GetMenuResetOffAction()</slot>
     <slot>S_GetMenuResetTransformAction()</slot>
     <slot>S_GetSamplingOption()</slot>
+    <slot>S_GetLightingColourRed(int)</slot>
+    <slot>S_GetLightingColourGreen(int)</slot>
+    <slot>S_GetLightingColourBlue(int)</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -534,7 +582,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>502</x>
-     <y>216</y>
+     <y>204</y>
     </hint>
     <hint type="destinationlabel">
      <x>240</x>
@@ -614,7 +662,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>502</x>
-     <y>260</y>
+     <y>248</y>
     </hint>
     <hint type="destinationlabel">
      <x>300</x>
@@ -630,7 +678,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>502</x>
-     <y>304</y>
+     <y>292</y>
     </hint>
     <hint type="destinationlabel">
      <x>321</x>
@@ -646,7 +694,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>502</x>
-     <y>377</y>
+     <y>362</y>
     </hint>
     <hint type="destinationlabel">
      <x>284</x>
@@ -662,7 +710,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>502</x>
-     <y>426</y>
+     <y>408</y>
     </hint>
     <hint type="destinationlabel">
      <x>318</x>
@@ -678,7 +726,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>502</x>
-     <y>475</y>
+     <y>454</y>
     </hint>
     <hint type="destinationlabel">
      <x>319</x>
@@ -694,7 +742,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>502</x>
-     <y>348</y>
+     <y>336</y>
     </hint>
     <hint type="destinationlabel">
      <x>294</x>
@@ -714,7 +762,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>502</x>
-     <y>397</y>
+     <y>382</y>
     </hint>
    </hints>
   </connection>
@@ -730,7 +778,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>502</x>
-     <y>446</y>
+     <y>428</y>
     </hint>
    </hints>
   </connection>
@@ -746,7 +794,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>502</x>
-     <y>495</y>
+     <y>474</y>
     </hint>
    </hints>
   </connection>
@@ -758,7 +806,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>502</x>
-     <y>524</y>
+     <y>500</y>
     </hint>
     <hint type="destinationlabel">
      <x>339</x>
@@ -778,39 +826,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>502</x>
-     <y>544</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>openGLWidget</sender>
-   <signal>Si_SetRockmaskTrianglesLabel(QString)</signal>
-   <receiver>l_triangleRockmask</receiver>
-   <slot>setText(QString)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>339</x>
-     <y>483</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>502</x>
-     <y>593</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>cb_rockmaskSurfaceTogglex</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>openGLWidget</receiver>
-   <slot>S_GetRockmaskSurfaceToggle(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>502</x>
-     <y>573</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>336</x>
-     <y>527</y>
+     <y>520</y>
     </hint>
    </hints>
   </connection>
@@ -906,7 +922,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>502</x>
-     <y>348</y>
+     <y>336</y>
     </hint>
    </hints>
   </connection>
@@ -922,7 +938,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>502</x>
-     <y>304</y>
+     <y>292</y>
     </hint>
    </hints>
   </connection>
@@ -1067,6 +1083,54 @@
     <hint type="destinationlabel">
      <x>260</x>
      <y>386</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lightRedSlider</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>openGLWidget</receiver>
+   <slot>S_GetLightingColourRed(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>360</x>
+     <y>561</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>305</x>
+     <y>568</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lightGreenSlider</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>openGLWidget</receiver>
+   <slot>S_GetLightingColourGreen(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>363</x>
+     <y>580</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>315</x>
+     <y>587</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lightBlueSlider</sender>
+   <signal>sliderMoved(int)</signal>
+   <receiver>openGLWidget</receiver>
+   <slot>S_GetLightingColourBlue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>360</x>
+     <y>601</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>332</x>
+     <y>621</y>
     </hint>
    </hints>
   </connection>
